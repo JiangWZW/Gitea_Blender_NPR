@@ -211,6 +211,9 @@ set(SRC
   engines/strokegen/strokegen_engine.cc
   engines/strokegen/strokegen_shader.cc
   engines/strokegen/strokegen_instance.cc
+  engines/strokegen/strokegen_sync.cc
+
+
 
 
 
@@ -305,6 +308,8 @@ set(SRC
   engines/strokegen/strokegen_engine.h
   engines/strokegen/strokegen_shader.hh
   engines/strokegen/strokegen_instance.hh
+  engines/strokegen/strokegen_sync_handles.hh
+  engines/strokegen/strokegen_sync.hh
 )
 
 set(LIB

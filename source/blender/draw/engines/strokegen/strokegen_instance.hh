@@ -22,6 +22,7 @@
 #include "draw_manager.hh"
 #include "draw_pass.hh"
 #include "strokegen_shader.hh"
+#include "strokegen_sync.hh"
 
 
 namespace blender::strokegen
@@ -35,7 +36,7 @@ namespace blender::strokegen
   public:
     /** Shading Modules */
     ShaderModule shaders; // singleton class for handling GPUShader(s)
-
+    SyncModule sync;
 
     /** Input data. */
     Depsgraph *depsgraph;
@@ -62,7 +63,9 @@ namespace blender::strokegen
 
 
   public:
-    Instance() : shaders(*ShaderModule::module_get())
+    Instance() :
+    shaders(*ShaderModule::module_get()),
+    sync(*this)
     {
     };
 
