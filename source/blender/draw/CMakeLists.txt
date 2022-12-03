@@ -208,6 +208,11 @@ set(SRC
   engines/overlay/overlay_viewer_attribute.cc
   engines/overlay/overlay_volume.cc
   engines/overlay/overlay_wireframe.cc
+  engines/strokegen/strokegen_engine.cc
+  engines/strokegen/strokegen_shader.cc
+  engines/strokegen/strokegen_instance.cc
+
+
 
   DRW_engine.h
   DRW_pbvh.h
@@ -297,6 +302,9 @@ set(SRC
   engines/select/select_private.h
   engines/overlay/overlay_engine.h
   engines/overlay/overlay_private.hh
+  engines/strokegen/strokegen_engine.h
+  engines/strokegen/strokegen_shader.hh
+  engines/strokegen/strokegen_instance.hh
 )
 
 set(LIB
