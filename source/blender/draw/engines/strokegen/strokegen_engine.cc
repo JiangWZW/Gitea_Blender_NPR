@@ -85,8 +85,26 @@ static void strokegen_engine_init(void *vedata)
     ved->instance = new strokegen::Instance();
   }
 
+  draw::Manager *drw_mgr = DRW_manager_get();
+
   const DRWContextState *ctx_state = DRW_context_state_get();
-  ved->instance->init(ctx_state->depsgraph, ctx_state->v3d);
+  View3D *v3d = ctx_state->v3d;
+  RegionView3D *rv3d = ctx_state->rv3d;
+
+  Object *camera = nullptr;
+  if (v3d && rv3d && rv3d->persp == RV3D_CAMOB)
+    camera = v3d->camera;
+
+  const DRWView* default_drw_view = DRW_view_default_get();
+
+
+  ved->instance->init(
+    ctx_state->depsgraph,
+    drw_mgr,
+    ctx_state->v3d, rv3d,
+    default_drw_view,
+    camera
+  );
 }
 
 
@@ -119,7 +137,11 @@ static void strokegen_draw_scene(void *vedata)
   const DRWView *default_view = DRW_view_default_get();
   draw::Manager *manager = DRW_manager_get();
   draw::View view("DefaultView", default_view);
+  // draw passes
   ved->instance->draw_viewport(*manager, view, dtxl->depth, dtxl->color);
+  // display error msg at the top of the render viewport
+  STRNCPY(ved->info, ved->instance->info.c_str());
+
 
 
   strokegen_draw_scene_legacy(vedata);

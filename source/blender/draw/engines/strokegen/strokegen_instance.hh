@@ -32,41 +32,54 @@ namespace blender::strokegen
   {
   private:
 
+  public:
+    /** Shading Modules */
+    ShaderModule shaders; // singleton class for handling GPUShader(s)
+
+
+    /** Input data. */
+    Depsgraph *depsgraph;
+    Manager *manager;
+
+    /** Evaluated IDs. */
+    Scene *scene;
+    Object *camera_eval_object;
+    Object *camera_orig_object;
+    /** Only available when rendering for viewport. */
+    const DRWView *drw_view;
+    const View3D *v3d;
+    const RegionView3D *rv3d;
+
+
+
+
+
+    /** Info string displayed at the top of the render / viewport. */
+    std::string info = "";
+    /** Debug mode from debug value. */
+    // eDebugMode debug_mode = eDebugMode::DEBUG_NONE;
+
+
 
   public:
     Instance() : shaders(*ShaderModule::module_get())
     {
     };
 
-    void init(Depsgraph* depsgraph, View3D* v3d)
-    {
-      /* Init things static per render frame. (Not render graph related) */
-    }
+    void init(Depsgraph* depsgraph_, draw::Manager* manager_, const View3D* v3d_, const RegionView3D* rv3d_, const
+              DRWView* drw_view_, Object* camera_object_);
+    void update_eval_members();
 
-    void begin_sync(Manager& /* manager */)
-    {
-      /* Init draw passes and manager related stuff. (Begin render graph) */
-    }
+    void begin_sync(Manager& manager);
 
-    void object_sync(Manager& manager, ObjectRef& object_ref)
-    {
-      /* Add object draw calls to passes. (Populate render graph) */
-    }
+    void object_sync(Manager& manager, ObjectRef& object_ref);
 
-    void end_sync(Manager& /* manager */)
-    {
-      /* Post processing after all object. (End render graph) */
-    }
+    void end_sync(Manager& /* manager */);
 
     void draw_viewport(Manager& manager, View& view, GPUTexture* depth_tx,
-                       GPUTexture* color_tx)
-    {
-      /* Submit passes here. (Execute render graph) */
-    }
+                       GPUTexture* color_tx);
 
 
-
-    ShaderModule shaders; // singleton class for handling GPUShader(s)
 
 
   };
