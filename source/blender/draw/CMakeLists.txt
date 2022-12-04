@@ -208,10 +208,10 @@ set(SRC
   engines/overlay/overlay_viewer_attribute.cc
   engines/overlay/overlay_volume.cc
   engines/overlay/overlay_wireframe.cc
-  engines/strokegen/strokegen_engine.cc
-  engines/strokegen/strokegen_shader.cc
-  engines/strokegen/strokegen_instance.cc
-  engines/strokegen/strokegen_sync.cc
+  engines/bnpr/bnpr_engine.cc
+  engines/bnpr/bnpr_shader.cc
+  engines/bnpr/bnpr_instance.cc
+  engines/bnpr/bnpr_sync.cc
 
 
 
@@ -305,11 +305,11 @@ set(SRC
   engines/select/select_private.h
   engines/overlay/overlay_engine.h
   engines/overlay/overlay_private.hh
-  engines/strokegen/strokegen_engine.h
-  engines/strokegen/strokegen_shader.hh
-  engines/strokegen/strokegen_instance.hh
-  engines/strokegen/strokegen_sync_handles.hh
-  engines/strokegen/strokegen_sync.hh
+  engines/bnpr/bnpr_engine.h
+  engines/bnpr/bnpr_shader.hh
+  engines/bnpr/bnpr_instance.hh
+  engines/bnpr/bnpr_sync_handles.hh
+  engines/bnpr/bnpr_sync.hh
 )
 
 set(LIB
@@ -699,6 +699,13 @@ set(GLSL_SRC
   engines/image/shaders/image_engine_color_vert.glsl
   engines/image/shaders/image_engine_depth_frag.glsl
   engines/image/shaders/image_engine_depth_vert.glsl
+
+
+
+
+
+
+
 )
 
 set(GLSL_C)

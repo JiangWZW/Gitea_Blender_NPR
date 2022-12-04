@@ -17,72 +17,72 @@
 
 #include "GPU_shader.h"
 
-#include "strokegen_engine.h"
+#include "bnpr_engine.h"
 
-#include "strokegen_instance.hh"
-#include "strokegen_shader.hh"
+#include "bnpr_instance.hh"
+#include "bnpr_shader.hh"
 
 
 using namespace blender;
 
 
 
-#define STROKEGEN_ENGINE "BLENDER_STROKEGEN"
+#define bnpr_ENGINE "BLENDER_bnpr"
 
 /* *********** LISTS *********** */
 
 /* GPUViewport.storage
  * Is freed every time the viewport engine changes. */
-typedef struct STROKEGEN_StorageList {
-  struct STROKEGEN_PrivateData *g_data;
-} STROKEGEN_StorageList;
+typedef struct bnpr_StorageList {
+  struct bnpr_PrivateData *g_data;
+} bnpr_StorageList;
 
-typedef struct STROKEGEN_PassList {
+typedef struct bnpr_PassList {
   struct DRWPass *depth_pass[2];
   struct DRWPass *depth_pass_pointcloud[2];
   struct DRWPass *depth_pass_cull[2];
-} STROKEGEN_PassList;
+} bnpr_PassList;
 
 // Per-engine data
 // Sent by draw manager to the draw-engine.
-typedef struct STROKEGEN_Data {
+typedef struct bnpr_Data {
   void *engine_type;
   DRWViewportEmptyList *fbl;
   DRWViewportEmptyList *txl;
-  STROKEGEN_PassList *psl;
-  STROKEGEN_StorageList *stl;
+  bnpr_PassList *psl;
+  bnpr_StorageList *stl;
 
-  strokegen::Instance *instance;
+  bnpr::Instance *instance;
   char info[GPU_INFO_SIZE];
 
-} STROKEGEN_Data;
+} bnpr_Data;
 
 /* *********** STATIC *********** */
 
-typedef struct STROKEGEN_PrivateData {
+typedef struct bnpr_PrivateData {
   DRWShadingGroup *depth_shgrp[2];
   DRWShadingGroup *depth_shgrp_cull[2];
   DRWShadingGroup *depth_hair_shgrp[2];
   DRWShadingGroup *depth_curves_shgrp[2];
   DRWShadingGroup *depth_pointcloud_shgrp[2];
   bool use_material_slot_selection;
-} STROKEGEN_PrivateData; /* Transient data */
+} bnpr_PrivateData; /* Transient data */
 
 
 
-static bool check_strokegen_support()
+static bool check_bnpr_support()
 {
   return GPU_shader_storage_buffer_objects_support();
 }
 
 
-static void strokegen_engine_init(void *vedata)
+static void bnpr_engine_init(void *vedata)
 {
-  if (!check_strokegen_support()) { return; }
+  if (!check_bnpr_support()) { return; }
 
-  STROKEGEN_Data *ved = reinterpret_cast<STROKEGEN_Data *>(vedata);
+  bnpr_Data *ved = reinterpret_cast<bnpr_Data *>(vedata);
   if (ved->instance == nullptr) {
-    ved->instance = new strokegen::Instance();
+    ved->instance = new bnpr::Instance();
   }
 
   draw::Manager *drw_mgr = DRW_manager_get();
@@ -109,9 +109,9 @@ static void strokegen_engine_init(void *vedata)
 
 
 
-static void strokegen_draw_scene_legacy(void *vedata)
+static void bnpr_draw_scene_legacy(void *vedata)
 {
-  STROKEGEN_PassList *psl = ((STROKEGEN_Data *)vedata)->psl;
+  bnpr_PassList *psl = ((bnpr_Data *)vedata)->psl;
 
   DRW_draw_pass(psl->depth_pass[0]);
   DRW_draw_pass(psl->depth_pass_pointcloud[0]);
@@ -121,11 +121,11 @@ static void strokegen_draw_scene_legacy(void *vedata)
   DRW_draw_pass(psl->depth_pass_cull[1]);
 }
 
-static void strokegen_draw_scene(void *vedata)
+static void bnpr_draw_scene(void *vedata)
 {
-  STROKEGEN_Data *ved = reinterpret_cast<STROKEGEN_Data *>(vedata);
-  if (!check_strokegen_support()) {
-    STRNCPY(ved->info, "Error: No shader storage buffer support, required by StrokeGen.");
+  bnpr_Data *ved = reinterpret_cast<bnpr_Data *>(vedata);
+  if (!check_bnpr_support()) {
+    STRNCPY(ved->info, "Error: No shader storage buffer support, required by bnpr.");
     return;
   }
 
@@ -144,7 +144,7 @@ static void strokegen_draw_scene(void *vedata)
 
 
 
-  strokegen_draw_scene_legacy(vedata);
+  bnpr_draw_scene_legacy(vedata);
 
 
   /* Reset view for other following engines. */
@@ -154,17 +154,17 @@ static void strokegen_draw_scene(void *vedata)
 
 
 
-static void strokegen_cache_init_legacy(void *vedata)
+static void bnpr_cache_init_legacy(void *vedata)
 {
-  STROKEGEN_PassList *psl = static_cast<STROKEGEN_Data*>(vedata)->psl;
-  STROKEGEN_StorageList *stl = static_cast<STROKEGEN_Data*>(vedata)->stl;
+  bnpr_PassList *psl = static_cast<bnpr_Data*>(vedata)->psl;
+  bnpr_StorageList *stl = static_cast<bnpr_Data*>(vedata)->stl;
   DRWShadingGroup *grp;
 
   const DRWContextState *draw_ctx = DRW_context_state_get();
 
   if (!stl->g_data) {
     /* Alloc transient pointers */
-    stl->g_data = (STROKEGEN_PrivateData* )MEM_callocN(sizeof(*stl->g_data), __func__);
+    stl->g_data = (bnpr_PrivateData* )MEM_callocN(sizeof(*stl->g_data), __func__);
   }
 
   stl->g_data->use_material_slot_selection = DRW_state_is_material_select();
@@ -179,50 +179,50 @@ static void strokegen_cache_init_legacy(void *vedata)
     );
     DRWState state = DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL;
 
-    blender::strokegen::ShaderModule* shaderModule =
-      blender::strokegen::ShaderModule::module_get();
+    blender::bnpr::ShaderModule* shaderModule =
+      blender::bnpr::ShaderModule::module_get();
 
     GPUShader *sh = DRW_state_is_select() ?
-                        shaderModule->static_shader_get(blender::strokegen::DEPTH_CONSERVATIVE) :
-                        shaderModule->static_shader_get(blender::strokegen::DEPTH);
+                        shaderModule->static_shader_get(blender::bnpr::DEPTH_CONSERVATIVE) :
+                        shaderModule->static_shader_get(blender::bnpr::DEPTH);
 
     DRW_PASS_CREATE(psl->depth_pass[i], state | clip_state | infront_state);
     stl->g_data->depth_shgrp[i] = grp = DRW_shgroup_create(sh, psl->depth_pass[i]);
     DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
 
     sh = DRW_state_is_select() ?
-        shaderModule->static_shader_get(blender::strokegen::POINTCLOUD_DEPTH_CONSERVATIVE) :
-        shaderModule->static_shader_get(blender::strokegen::POINTCLOUD_DEPTH);
+        shaderModule->static_shader_get(blender::bnpr::POINTCLOUD_DEPTH_CONSERVATIVE) :
+        shaderModule->static_shader_get(blender::bnpr::POINTCLOUD_DEPTH);
     DRW_PASS_CREATE(psl->depth_pass_pointcloud[i], state | clip_state | infront_state);
     stl->g_data->depth_pointcloud_shgrp[i] = grp = DRW_shgroup_create(
         sh, psl->depth_pass_pointcloud[i]);
     DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
 
     stl->g_data->depth_hair_shgrp[i] = grp = DRW_shgroup_create(
-        shaderModule->static_shader_get(blender::strokegen::DEPTH), psl->depth_pass[i]);
+        shaderModule->static_shader_get(blender::bnpr::DEPTH), psl->depth_pass[i]);
     DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
 
     stl->g_data->depth_curves_shgrp[i] = grp = DRW_shgroup_create(
-        shaderModule->static_shader_get(blender::strokegen::CURVES_DEPTH), psl->depth_pass[i]);
+        shaderModule->static_shader_get(blender::bnpr::CURVES_DEPTH), psl->depth_pass[i]);
     DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
 
-    sh = DRW_state_is_select() ? shaderModule->static_shader_get(blender::strokegen::DEPTH_CONSERVATIVE) :
-                                 shaderModule->static_shader_get(blender::strokegen::DEPTH);
+    sh = DRW_state_is_select() ? shaderModule->static_shader_get(blender::bnpr::DEPTH_CONSERVATIVE) :
+                                 shaderModule->static_shader_get(blender::bnpr::DEPTH);
     state |= DRW_STATE_CULL_BACK;
     DRW_PASS_CREATE(psl->depth_pass_cull[i], state | clip_state | infront_state);
     stl->g_data->depth_shgrp_cull[i] = grp = DRW_shgroup_create(sh, psl->depth_pass_cull[i]);
     DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
   }
 }
-static void strokegen_cache_init(void *vedata)
+static void bnpr_cache_init(void *vedata)
 {
-  if (!check_strokegen_support()) return;
+  if (!check_bnpr_support()) return;
 
   draw::Manager* drwmgr = DRW_manager_get();
-  reinterpret_cast<STROKEGEN_Data *>(vedata)->instance->begin_sync(*drwmgr);
+  reinterpret_cast<bnpr_Data *>(vedata)->instance->begin_sync(*drwmgr);
 
 
-  strokegen_cache_init_legacy(vedata);
+  bnpr_cache_init_legacy(vedata);
 }
 
 
@@ -235,7 +235,7 @@ static void strokegen_cache_init(void *vedata)
 
 /* TODO(fclem): DRW_cache_object_surface_material_get needs a refactor to allow passing NULL
  * instead of gpumat_array. Avoiding all this boilerplate code. */
-static struct GPUBatch **strokegen_object_surface_material_get(Object *ob)
+static struct GPUBatch **bnpr_object_surface_material_get(Object *ob)
 {
   const int materials_len = DRW_cache_object_material_count_get(ob);
   struct GPUMaterial **gpumat_array =
@@ -245,14 +245,14 @@ static struct GPUBatch **strokegen_object_surface_material_get(Object *ob)
   return DRW_cache_object_surface_material_get(ob, gpumat_array, materials_len);
 }
 
-static void strokegen_cache_populate_particles(void *vedata, Object *ob)
+static void bnpr_cache_populate_particles(void *vedata, Object *ob)
 {
   // do nothing here.
 }
 
-static void strokegen_cache_populate_legacy(void *vedata, Object *ob)
+static void bnpr_cache_populate_legacy(void *vedata, Object *ob)
 {
-  STROKEGEN_StorageList *stl = ((STROKEGEN_Data *)vedata)->stl;
+  bnpr_StorageList *stl = ((bnpr_Data *)vedata)->stl;
 
   /* TODO(fclem): fix selection of smoke domains. */
 
@@ -262,7 +262,7 @@ static void strokegen_cache_populate_legacy(void *vedata, Object *ob)
 
   const DRWContextState *draw_ctx = DRW_context_state_get();
   if (ob != draw_ctx->object_edit) {
-    strokegen_cache_populate_particles(vedata, ob);
+    bnpr_cache_populate_particles(vedata, ob);
   }
 
   const bool do_in_front = (ob->dtx & OB_DRAW_IN_FRONT) != 0;
@@ -308,7 +308,7 @@ static void strokegen_cache_populate_legacy(void *vedata, Object *ob)
   }
   else {
     if (stl->g_data->use_material_slot_selection && BKE_object_supports_material_slots(ob)) {
-      struct GPUBatch **geoms = strokegen_object_surface_material_get(ob);
+      struct GPUBatch **geoms = bnpr_object_surface_material_get(ob);
       if (geoms) {
         const int materials_len = DRW_cache_object_material_count_get(ob);
         for (int i = 0; i < materials_len; i++) {
@@ -329,11 +329,11 @@ static void strokegen_cache_populate_legacy(void *vedata, Object *ob)
     }
   }
 }
-static void strokegen_cache_populate(void *vedata, Object *object)
+static void bnpr_cache_populate(void *vedata, Object *object)
 {
-  if (!check_strokegen_support()) return;
+  if (!check_bnpr_support()) return;
 
-  STROKEGEN_Data* ved = reinterpret_cast<STROKEGEN_Data *>(vedata);
+  bnpr_Data* ved = reinterpret_cast<bnpr_Data *>(vedata);
 
   draw::Manager* drw_mgr = DRW_manager_get();
   draw::ObjectRef ref {
@@ -346,43 +346,43 @@ static void strokegen_cache_populate(void *vedata, Object *object)
 
 
 
-  strokegen_cache_populate_legacy(vedata, object);
+  bnpr_cache_populate_legacy(vedata, object);
 }
 
 
-static void strokegen_cache_finish_legacy(void *vedata)
+static void bnpr_cache_finish_legacy(void *vedata)
 {
-  STROKEGEN_StorageList *stl = ((STROKEGEN_Data *)vedata)->stl;
+  bnpr_StorageList *stl = ((bnpr_Data *)vedata)->stl;
 
   UNUSED_VARS(stl);
 }
-static void strokegen_cache_finish(void *vedata)
+static void bnpr_cache_finish(void *vedata)
 {
-  if (!check_strokegen_support()) return;
+  if (!check_bnpr_support()) return;
 
-  STROKEGEN_Data* ved = reinterpret_cast<STROKEGEN_Data*>(vedata);
+  bnpr_Data* ved = reinterpret_cast<bnpr_Data*>(vedata);
   draw::Manager* drw_mgr = DRW_manager_get();
 
   ved->instance->end_sync(*drw_mgr);
 
 
 
-  strokegen_cache_finish_legacy(vedata);
+  bnpr_cache_finish_legacy(vedata);
 }
 
-static void strokegen_instance_free(void *instance) {
+static void bnpr_instance_free(void *instance) {
   if (!GPU_shader_storage_buffer_objects_support()) {
     return;
   }
-  delete reinterpret_cast<strokegen::Instance *>(instance);
+  delete reinterpret_cast<bnpr::Instance *>(instance);
 }
 
-static void strokegen_engine_free(void)
+static void bnpr_engine_free(void)
 {
-  strokegen::ShaderModule::module_free();
+  bnpr::ShaderModule::module_free();
 }
 
-static void strokegen_render_to_image(void *vedata, struct RenderEngine *engine,
+static void bnpr_render_to_image(void *vedata, struct RenderEngine *engine,
                                     struct RenderLayer *layer,
                                     const struct rcti *UNUSED(rect)) {
   UNUSED_VARS(vedata, engine, layer);
@@ -393,31 +393,31 @@ static void strokegen_render_to_image(void *vedata, struct RenderEngine *engine,
 
 
 
-static const DrawEngineDataSize strokegen_data_size = DRW_VIEWPORT_DATA_SIZE(STROKEGEN_Data);
+static const DrawEngineDataSize bnpr_data_size = DRW_VIEWPORT_DATA_SIZE(bnpr_Data);
 
-DrawEngineType draw_engine_strokegen_type = {
+DrawEngineType draw_engine_bnpr_type = {
     NULL,
     NULL,
-    N_("StrokeGen"),
-    &strokegen_data_size,
-    strokegen_engine_init,
-    &strokegen_engine_free,
-    &strokegen_instance_free,
-    &strokegen_cache_init,
-    &strokegen_cache_populate,
-    &strokegen_cache_finish,
-    &strokegen_draw_scene,
+    N_("bnpr"),
+    &bnpr_data_size,
+    bnpr_engine_init,
+    &bnpr_engine_free,
+    &bnpr_instance_free,
+    &bnpr_cache_init,
+    &bnpr_cache_populate,
+    &bnpr_cache_finish,
+    &bnpr_draw_scene,
     NULL,
     NULL,
-    strokegen_render_to_image,
+    bnpr_render_to_image,
     NULL,
 };
 
-RenderEngineType DRW_engine_viewport_strokegen_type = {
+RenderEngineType DRW_engine_viewport_bnpr_type = {
   nullptr,
   nullptr,
-  "STROKEGEN_VIEW",
-  N_("strokegen"),
+  "bnpr_VIEW",
+  N_("bnpr"),
   RE_INTERNAL | RE_USE_PREVIEW | RE_USE_STEREO_VIEWPORT | RE_USE_GPU_CONTEXT,
   nullptr,
   &DRW_render_to_image,
@@ -428,8 +428,8 @@ RenderEngineType DRW_engine_viewport_strokegen_type = {
   nullptr,
   nullptr,
   nullptr, // TODO: impl this
-  &draw_engine_strokegen_type,
+  &draw_engine_bnpr_type,
   {nullptr, nullptr, nullptr},
 };
 
-#undef STROKEGEN_ENGINE
+#undef bnpr_ENGINE

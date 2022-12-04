@@ -3,7 +3,7 @@
  */
 
 /** \file
- * \ingroup strokegen
+ * \ingroup bnpr
  *
  * An renderer instance that contains all data to render a full frame.
 */
@@ -21,11 +21,11 @@
 
 #include "draw_manager.hh"
 #include "draw_pass.hh"
-#include "strokegen_shader.hh"
-#include "strokegen_sync.hh"
+#include "bnpr_shader.hh"
+#include "bnpr_sync.hh"
 
 
-namespace blender::strokegen
+namespace blender::bnpr
 {
   using namespace draw;
 

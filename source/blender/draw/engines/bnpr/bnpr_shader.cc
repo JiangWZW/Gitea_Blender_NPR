@@ -13,9 +13,9 @@
 
 #include "gpu_shader_create_info.hh"
 
-#include "strokegen_shader.hh"
+#include "bnpr_shader.hh"
 
-namespace blender::strokegen {
+namespace blender::bnpr {
 
 /* -------------------------------------------------------------------- */
 /** \name Module
@@ -53,12 +53,12 @@ ShaderModule::ShaderModule()
   for (auto i : IndexRange(MAX_SHADER_TYPE)) {
     const char *name = static_shader_create_info_name_get(eShaderType(i));
     if (name == nullptr) {
-      std::cerr << "STROKEGEN: Missing case for eShaderType(" << i
+      std::cerr << "bnpr: Missing case for eShaderType(" << i
                 << ") in static_shader_create_info_name_get().";
       BLI_assert(0);
     }
     const GPUShaderCreateInfo *create_info = GPU_shader_create_info_get(name);
-    BLI_assert_msg(create_info != nullptr, "STROKEGEN: Missing create info for static shader.");
+    BLI_assert_msg(create_info != nullptr, "bnpr: Missing create info for static shader.");
   }
 #endif
 }
@@ -106,7 +106,7 @@ GPUShader *ShaderModule::static_shader_get(eShaderType shader_type)
     shaders_[shader_type] = GPU_shader_create_from_info_name(shader_name);
 
     if (shaders_[shader_type] == nullptr) {
-      fprintf(stderr, "STROKEGEN: error: Could not compile static shader \"%s\"\n", shader_name);
+      fprintf(stderr, "bnpr: error: Could not compile static shader \"%s\"\n", shader_name);
     }
     BLI_assert(shaders_[shader_type] != nullptr);
   }
@@ -116,4 +116,4 @@ GPUShader *ShaderModule::static_shader_get(eShaderType shader_type)
 
 /** \} */
 
-}  // namespace blender::strokegen
+}  // namespace blender::bnpr

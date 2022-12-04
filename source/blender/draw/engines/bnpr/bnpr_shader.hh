@@ -3,7 +3,7 @@
  */
 
 /** \file
- * \ingroup strokegen
+ * \ingroup bnpr
  *
  * Shader module that manage shader libraries, deferred compilation,
  * and static shader usage.
@@ -20,7 +20,7 @@
 #include "GPU_shader.h"
 
 
-namespace blender::strokegen {
+namespace blender::bnpr {
 
 /* Keep alphabetical order and clean prefix. */
 enum eShaderType {
@@ -59,4 +59,4 @@ class ShaderModule {
   const char *static_shader_create_info_name_get(eShaderType shader_type);
 };
 
-}  // namespace blender::strokegen
+}  // namespace blender::bnpr

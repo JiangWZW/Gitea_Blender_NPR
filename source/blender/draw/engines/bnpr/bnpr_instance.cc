@@ -3,7 +3,7 @@
  */
 
 /** \file
- * \ingroup strokegen
+ * \ingroup bnpr
  *
  * An instance contains all structures needed to do a complete render.
  */
@@ -19,9 +19,9 @@
 #include "DNA_modifier_types.h"
 #include "RE_pipeline.h"
 
-#include "strokegen_instance.hh"
+#include "bnpr_instance.hh"
 
-namespace blender::strokegen
+namespace blender::bnpr
 {
   /* -------------------------------------------------------------------- */
   /** \name Initialization

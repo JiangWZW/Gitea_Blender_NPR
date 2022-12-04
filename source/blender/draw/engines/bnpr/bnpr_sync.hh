@@ -17,10 +17,10 @@
 #include "DRW_render.h"
 #include "GPU_material.h"
 
-#include "strokegen_shader_shared.hh"
-#include "strokegen_sync_handles.hh"
+// #include "bnpr_shader_shared.hh"
+#include "bnpr_sync_handles.hh"
 
-namespace blender::strokegen
+namespace blender::bnpr
 {
 
   class Instance;

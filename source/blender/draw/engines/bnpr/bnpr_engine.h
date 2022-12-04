@@ -14,8 +14,8 @@
 extern "C" { // to satisfy .cc files
 #endif
 
-extern DrawEngineType draw_engine_strokegen_type;
-extern RenderEngineType DRW_engine_viewport_strokegen_type;
+extern DrawEngineType draw_engine_bnpr_type;
+extern RenderEngineType DRW_engine_viewport_bnpr_type;
 
 // Also I spent some time reading the mesh extraction code,
 // feel like I could add one or more new mesh buffers & extractors?
