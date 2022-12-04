@@ -17,7 +17,7 @@
 #include "DRW_render.h"
 #include "GPU_material.h"
 
-// #include "bnpr_shader_shared.hh"
+#include "bnpr_shader_shared.hh"
 #include "bnpr_sync_handles.hh"
 
 namespace blender::bnpr

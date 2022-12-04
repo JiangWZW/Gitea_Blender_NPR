@@ -3,8 +3,11 @@
  */
 
 /** \file
- * \ingroup eevee
+ * \ingroup bnpr
  *
  * List of defines that are shared with the GPUShaderCreateInfos. We do this to avoid
  * dragging larger headers into the createInfo pipeline which would cause problems.
  */
+
+
+#pragma once

@@ -705,6 +705,9 @@ set(GLSL_SRC
 
 
 
+  engines/bnpr/bnpr_defines.hh
+  engines/bnpr/bnpr_shader_shared.hh
+
 
 )
 
