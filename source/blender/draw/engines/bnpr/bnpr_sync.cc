@@ -35,11 +35,5 @@ namespace blender::bnpr
     dd->recalc = ID_RECALC_ALL; /* Tag given ID for an update in all the dependency graphs. */
   }
 
-  // ObjectHandle& SyncModule::sync_object(Object* ob)
-  // {
-  //   DrawEngineType *owner = (DrawEngineType *)&DRW_engine_viewport_bnpr_type;
-  //   return ObjectHandle();
-  // }
-
 
 }

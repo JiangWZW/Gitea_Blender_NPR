@@ -23,7 +23,9 @@
 #include "draw_pass.hh"
 #include "bnpr_shader.hh"
 #include "bnpr_sync.hh"
-
+#include "bnpr_strokegen_buffer_pool.hh"
+#include "bnpr_strokegen_texture_pool.hh"
+#include "bnpr_strokegen_pass.hh"
 
 namespace blender::bnpr
 {
@@ -37,6 +39,9 @@ namespace blender::bnpr
     /** Shading Modules */
     ShaderModule shaders; // singleton class for handling GPUShader(s)
     SyncModule sync;
+    GPUBufferPoolModule   strokegen_buffers;
+    GPUTexturePoolModule  strokegen_textures;
+    StrokeGenPassModule   strokegen_passes;
 
     /** Input data. */
     Depsgraph *depsgraph;
@@ -65,7 +70,10 @@ namespace blender::bnpr
   public:
     Instance() :
     shaders(*ShaderModule::module_get()),
-    sync(*this)
+    sync(*this),
+    strokegen_buffers(*this),
+    strokegen_textures(*this),
+    strokegen_passes(shaders, strokegen_buffers, strokegen_textures)
     {
     };
 

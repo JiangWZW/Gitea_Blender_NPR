@@ -24,7 +24,8 @@ namespace blender::bnpr {
 
 /* Keep alphabetical order and clean prefix. */
 enum eShaderType {
-  DEPTH = 0,
+  COMPUTE_TEST = 0,
+  DEPTH,
   POINTCLOUD_DEPTH,
   CURVES_DEPTH,
   DEPTH_CONSERVATIVE,

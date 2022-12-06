@@ -9,5 +9,7 @@
  * dragging larger headers into the createInfo pipeline which would cause problems.
  */
 
-
 #pragma once
+
+
+#define GROUP_SIZE_STROKEGEN_TEST 512

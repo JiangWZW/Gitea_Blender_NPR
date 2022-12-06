@@ -212,8 +212,9 @@ set(SRC
   engines/bnpr/bnpr_shader.cc
   engines/bnpr/bnpr_instance.cc
   engines/bnpr/bnpr_sync.cc
-
-
+  engines/bnpr/bnpr_strokegen_buffer_pool.cc
+  engines/bnpr/bnpr_strokegen_texture_pool.cc
+  engines/bnpr/bnpr_strokegen_pass.cc
 
 
 
@@ -310,6 +311,9 @@ set(SRC
   engines/bnpr/bnpr_instance.hh
   engines/bnpr/bnpr_sync_handles.hh
   engines/bnpr/bnpr_sync.hh
+  engines/bnpr/bnpr_strokegen_buffer_pool.hh
+  engines/bnpr/bnpr_strokegen_texture_pool.hh
+  engines/bnpr/bnpr_strokegen_pass.hh
 )
 
 set(LIB
@@ -700,15 +704,10 @@ set(GLSL_SRC
   engines/image/shaders/image_engine_depth_frag.glsl
   engines/image/shaders/image_engine_depth_vert.glsl
 
-
-
-
-
+  engines/bnpr/shaders/bnpr_strokegen_test_comp.glsl
 
   engines/bnpr/bnpr_defines.hh
   engines/bnpr/bnpr_shader_shared.hh
-
-
 )
 
 set(GLSL_C)
