@@ -21,6 +21,9 @@
 #include "bnpr_instance.hh"
 #include "bnpr_sync.hh"
 
+#include "draw_cache_extract.hh"
+#include "draw_cache_impl.h"
+
 namespace blender::bnpr
 {
   /* -------------------------------------------------------------------- */
@@ -52,6 +55,27 @@ namespace blender::bnpr
     return dd_bnpr;
   }
 
+  void SyncModule::sync_mesh(
+    Object* ob, ObjectHandle& ob_handle,
+    draw::ResourceHandle res_handle, const draw::ObjectRef& ob_ref
+  )
+  {
+    bool mesh_is_manifold;
+    GPUBatch *geobatch = DRW_cache_object_edge_detection_get(ob, &mesh_is_manifold);
+
+    if (geobatch == nullptr) return;
+
+    // Old way to do this:
+    // See "draw_subdiv_build_tris_buffer"
+    // const char *defines = "#define XXX\n";
+    // GPUShader *shader = get_strokegen_shader(...)
+    //
+    // eevvee_next way to do this:
+    //  strokegen_passes.dispatch_extract_mesh_contour(ob);
+    //  strokegen_passes.dispatch_XXX(...);
+    //  ... ... ...
+    inst_.strokegen_passes.dispatch_extract_mesh_contour(ob);
 
 
+  }
 }

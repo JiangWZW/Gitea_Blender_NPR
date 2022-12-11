@@ -41,7 +41,7 @@ namespace blender::bnpr
     void sync_mesh(Object *ob,
                    ObjectHandle &ob_handle,
                    draw::ResourceHandle res_handle,
-                   const draw::ObjectRef &ob_ref) {};
+                   const draw::ObjectRef &ob_ref);
   };
 
 

@@ -32,9 +32,6 @@ namespace blender::bnpr
     GPUBufferPoolModule& buffers_;
     GPUTexturePoolModule& textures_;
 
-    void sync_(GPUBufferPoolModule& strokegen_buffers, GPUTexturePoolModule& strokegen_texture_pool);
-    void end_sync_();
-
 
   public:
     StrokeGenPassModule(
@@ -49,8 +46,11 @@ namespace blender::bnpr
 
     ~StrokeGenPassModule() {};
 
-    void sync() { sync_(buffers_, textures_); }
-    void end_sync() { end_sync_(); }
+    /** Passes Batched by Usages */
+    void dispatch_extract_mesh_contour(Object* ob);
+
+
+
   };
 }
 

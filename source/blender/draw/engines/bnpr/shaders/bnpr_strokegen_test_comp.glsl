@@ -5,9 +5,7 @@
  * One thread processes one Light entity.
  */
 
-// #pragma BLENDER_REQUIRE(common_math_lib.glsl)
-
-uint buf_test[/*gl_WorkGroupSize.x*/4096];
+#pragma BLENDER_REQUIRE(gpu_shader_codegen_lib.glsl)
 
 void main()
 {

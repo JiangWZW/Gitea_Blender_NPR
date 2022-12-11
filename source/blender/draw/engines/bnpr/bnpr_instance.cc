@@ -81,8 +81,38 @@ namespace blender::bnpr
   }
 
   void Instance::object_sync(Manager& manager, ObjectRef& object_ref)
-  {
-    /* Add object draw calls to passes. (Populate render graph) */
+  { /* Add object draw calls to passes. (Populate render graph) */
+    Object *ob = object_ref.object;
+
+    const bool is_renderable_type = ELEM(ob->type, OB_CURVES, OB_GPENCIL, OB_MESH, OB_LAMP);
+    const int ob_visibility = DRW_object_visibility_in_active_context(ob);
+    const bool partsys_is_visible = (ob_visibility & OB_VISIBLE_PARTICLES) != 0 &&
+                                    (ob->type == OB_MESH);
+    const bool object_is_visible = DRW_object_is_renderable(ob) &&
+                                   (ob_visibility & OB_VISIBLE_SELF) != 0;
+
+    if (!is_renderable_type || (!partsys_is_visible && !object_is_visible)) {
+      return;
+    }
+
+    /* fclem: TODO cleanup. */
+    ObjectRef ob_ref = DRW_object_ref_get(ob);
+    ResourceHandle res_handle = manager.resource_handle(ob_ref);
+
+    ObjectHandle &ob_handle = sync.sync_object(ob);
+
+
+    if (object_is_visible) {
+      switch (ob->type) {
+      case OB_MESH:
+        sync.sync_mesh(ob, ob_handle, res_handle, ob_ref);
+        break;
+      default:
+        break;
+      }
+    }
+
+    ob_handle.reset_recalc_flag();
   }
 
   void Instance::end_sync(Manager&)
