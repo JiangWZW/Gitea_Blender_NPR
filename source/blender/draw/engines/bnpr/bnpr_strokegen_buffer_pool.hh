@@ -19,11 +19,11 @@ namespace blender::bnpr
     friend class StrokeGenPassModule;
 
   private:
-    /** Compute Resources */
-    StrokeGenTestBuf arr_buf_test_;
-
     /** Instance */
     Instance &instance;
+
+    /** Compute Resources */
+    StrokeGenTestBuf arr_buf_test_;
 
 
   public:

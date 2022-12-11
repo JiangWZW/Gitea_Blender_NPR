@@ -125,8 +125,7 @@ namespace blender::bnpr
   /** \} */
 
   /* -------------------------------------------------------------------- */
-  /** \name Sync Module
-   *
+  /** \name Engine-Specific Draw-Data
    * \{ */
 
   struct ObjectHandle : public DrawData

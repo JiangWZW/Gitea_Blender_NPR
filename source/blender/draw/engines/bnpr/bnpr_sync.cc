@@ -23,17 +23,35 @@
 
 namespace blender::bnpr
 {
-
   /* -------------------------------------------------------------------- */
   /** \name Draw Data
    *
    * \{ */
 
-  static void draw_data_init_cb(struct DrawData *dd)
+  static void draw_data_init_cb(struct DrawData* dd)
   {
     /* Object has just been created or was never evaluated by the engine. */
     dd->recalc = ID_RECALC_ALL; /* Tag given ID for an update in all the dependency graphs. */
   }
+
+
+  ObjectHandle& SyncModule::sync_object(Object* ob)
+  {
+    DrawEngineType* owner = (DrawEngineType*)&DRW_engine_viewport_bnpr_type;
+    struct DrawData* dd = DRW_drawdata_ensure(
+      (ID*)ob, owner, sizeof(ObjectHandle), draw_data_init_cb, nullptr);
+
+    ObjectHandle &dd_bnpr = *reinterpret_cast<ObjectHandle*>(dd); // draw-engine specific draw data.
+
+    if (dd_bnpr.object_key.ob == nullptr)
+    {
+      dd_bnpr.object_key = ObjectKey(ob);
+    }
+
+
+    return dd_bnpr;
+  }
+
 
 
 }

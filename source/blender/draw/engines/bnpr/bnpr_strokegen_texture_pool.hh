@@ -17,15 +17,17 @@ namespace blender::bnpr
   class GPUTexturePoolModule
   {
   private:
-    /** Compute Resources */
-    StrokeGenTestBuf arr_buf_test_;
-
     /** Instance */
-    Instance &instance;
+    Instance &instance_;
+
+    /** Compute Resources */
+    TextureFromPool strokegen_tex_test_;
 
 
   public:
-    GPUTexturePoolModule(Instance &inst) : instance(inst) {};
+    GPUTexturePoolModule(Instance &inst) :
+      instance_(inst),
+      strokegen_tex_test_("StrokegenTexture_Test"){};
     ~GPUTexturePoolModule() {};
 
     void sync(Object* object) {};

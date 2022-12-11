@@ -39,11 +39,11 @@ namespace blender::bnpr
   public:
     StrokeGenPassModule(
       ShaderModule          &strokegen_shaders,
-      GPUBufferPoolModule   &instance_buffers,
+      GPUBufferPoolModule   &strokegen_buffers,
       GPUTexturePoolModule  &strokegen_textures
     ) :
       shaders_(strokegen_shaders),
-      buffers_(instance_buffers),
+      buffers_(strokegen_buffers),
       textures_(strokegen_textures)
     {};
 
