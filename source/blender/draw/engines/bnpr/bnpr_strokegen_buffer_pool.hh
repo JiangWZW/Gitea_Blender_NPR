@@ -23,7 +23,7 @@ namespace blender::bnpr
     Instance &instance;
 
     /** Compute Resources */
-    StrokeGenTestBuf arr_buf_test_;
+    StrokeGenTestBuf strokegen_test_buf_;
 
 
   public:

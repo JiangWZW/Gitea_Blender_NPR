@@ -80,6 +80,11 @@ namespace blender::bnpr
     /* Init draw passes and manager related stuff. (Begin render graph) */
   }
 
+  void Instance::end_sync(Manager&)
+  {
+    /* Post processing after all object. (End render graph) */
+  }
+
   void Instance::object_sync(Manager& manager, ObjectRef& object_ref)
   { /* Add object draw calls to passes. (Populate render graph) */
     Object *ob = object_ref.object;
@@ -115,10 +120,6 @@ namespace blender::bnpr
     ob_handle.reset_recalc_flag();
   }
 
-  void Instance::end_sync(Manager&)
-  {
-    /* Post processing after all object. (End render graph) */
-  }
 
   /** \} */
 
@@ -135,6 +136,7 @@ namespace blender::bnpr
     GPUTexture* color_tx)
   {
     /* Submit passes here. (Execute render graph) */
+    manager.submit(strokegen_passes.get_compute_pass(StrokeGenPassModule::eType::EXTRACT_MESH_CONTOUR), view);
   }
 
   /** \} */

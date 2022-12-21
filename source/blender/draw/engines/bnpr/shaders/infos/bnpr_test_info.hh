@@ -8,13 +8,16 @@
  * \{ */
 
 /* For details, see "gpu_shader_create_info.hh" */
-// GPU_SHADER_CREATE_INFO(bnpr_strokegen_test_comp)
+// GPU_SHADER_CREATE_INFO(bnpr_strokegen_test)
   // .do_static_compilation(true)
 
   /* -------------------------------------------------------------------- */
   /* Name of other infos to recursively merge with this one.
    * No data slot must overlap otherwise we throw an error. */
   // .additional_info("eevee_shared", "draw_view", "draw_view_culling")
+
+  /* -------------------------------------------------------------------- */
+  /* Macros */
   // .define("DOF_BOKEH_TEXTURE", "false")
 
   /* -------------------------------------------------------------------- */
@@ -55,11 +58,10 @@
 
 
 
-
 /* -------------------------------------------------------------------- */
 /** \test
  * \{ */
-GPU_SHADER_CREATE_INFO(bnpr_strokegen_test)
+GPU_SHADER_CREATE_INFO(bnpr_strokegen_test_xxx)
   .do_static_compilation(true)
   .storage_buf(0, Qualifier::READ_WRITE, "uint", "buf_test")
   .local_group_size(GROUP_SIZE_STROKEGEN_TEST) /* <== from "bnpr_defines.hh" */

@@ -47,9 +47,21 @@ namespace blender::bnpr
     ~StrokeGenPassModule() {};
 
     /** Passes Batched by Usages */
-    void dispatch_extract_mesh_contour(Object* ob);
+    enum eType
+    {
+      EXTRACT_MESH_CONTOUR = 0
+    };
 
+    PassSimple& get_compute_pass(eType passType)
+    {
+      switch (passType) {
+        case EXTRACT_MESH_CONTOUR:
+          return pass_comp_test;
+      }
+      return pass_comp_test;
+    }
 
+    void rebuild_pass_extract_mesh_contour(Object* ob);
 
   };
 }

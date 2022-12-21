@@ -91,7 +91,7 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
     case POINTCLOUD_DEPTH_CONSERVATIVE:
       return "basic_depth_pointcloud_conservative";
     case COMPUTE_TEST:
-      return "bnpr_strokegen_test";
+      return "bnpr_strokegen_test_xxx";
 
     /* To avoid compiler warning about missing case. */
     case MAX_SHADER_TYPE:

@@ -82,10 +82,10 @@ namespace blender::bnpr
     void update_eval_members();
 
     void begin_sync(Manager& manager);
+    void end_sync(Manager& manager);
 
     void object_sync(Manager& manager, ObjectRef& object_ref);
 
-    void end_sync(Manager& /* manager */);
 
     void draw_viewport(Manager& manager, View& view, GPUTexture* depth_tx,
                        GPUTexture* color_tx);
