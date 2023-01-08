@@ -704,7 +704,11 @@ set(GLSL_SRC
   engines/image/shaders/image_engine_depth_frag.glsl
   engines/image/shaders/image_engine_depth_vert.glsl
 
+  engines/bnpr/shaders/bnpr_hlsl_support_lib.glsl
+  engines/bnpr/shaders/bnpr_scan_no_subgroup_lib.glsl
+  engines/bnpr/shaders/bnpr_scan_no_subgroup_codegen_lib.glsl
   engines/bnpr/shaders/bnpr_strokegen_test_comp.glsl
+  engines/bnpr/shaders/bnpr_scan_test_comp.glsl
 
   engines/bnpr/bnpr_defines.hh
   engines/bnpr/bnpr_shader_shared.hh

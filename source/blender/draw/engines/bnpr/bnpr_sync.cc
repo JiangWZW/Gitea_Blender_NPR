@@ -64,6 +64,7 @@ namespace blender::bnpr
     GPUBatch *geobatch = DRW_cache_object_edge_detection_get(ob, &mesh_is_manifold);
 
     if (geobatch == nullptr) return;
+    if (geobatch->elem == nullptr) return;
 
     // Old way to do this:
     // See "draw_subdiv_build_tris_buffer"
@@ -74,7 +75,8 @@ namespace blender::bnpr
     //  strokegen_passes.dispatch_extract_mesh_contour(ob);
     //  strokegen_passes.dispatch_XXX(...);
     //  ... ... ...
-    inst_.strokegen_passes.rebuild_pass_extract_mesh_contour(ob);
+    inst_.strokegen_passes.rebuild_pass_extract_mesh_contour(ob, geobatch);
+
 
 
   }

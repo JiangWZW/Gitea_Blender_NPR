@@ -92,6 +92,18 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
       return "basic_depth_pointcloud_conservative";
     case COMPUTE_TEST:
       return "bnpr_strokegen_test_xxx";
+    case SCAN_TEST_UPSWEEP:
+      return "bnpr_scan_test_upsweep";
+    case SCAN_TEST_AGGREGATE:
+      return "bnpr_scan_test_aggregate";
+    case SCAN_TEST_DWSWEEP:
+      return "bnpr_scan_test_dwsweep";
+    case SEGSCAN_TEST_UPSWEEP:
+      return "bnpr_segscan_test_upsweep";
+    case SEGSCAN_TEST_AGGREGATE:
+      return "bnpr_segscan_test_aggregate";
+    case SEGSCAN_TEST_DWSWEEP:
+      return "bnpr_segscan_test_dwsweep";
 
     /* To avoid compiler warning about missing case. */
     case MAX_SHADER_TYPE:

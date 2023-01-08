@@ -23,14 +23,20 @@ namespace blender::bnpr
     Instance &instance;
 
     /** Compute Resources */
-    StrokeGenTestBuf strokegen_test_buf_;
+    SSBO_StrokeGenTest ssbo_bnpr_test_;
 
+    SSBO_BnprScanData ssbo_bnpr_in_scan_data_;
+    SSBO_BnprScanData ssbo_bnpr_out_scan_data_;
+    SSBO_BnprScanAggregates ssbo_bnpr_scan_block_sum_;
+
+    UBO_BnprTreeScan ubo_bnpr_tree_scan_infos_;
 
   public:
-    GPUBufferPoolModule(Instance &inst) : instance(inst) {};
-    ~GPUBufferPoolModule() {};
+    GPUBufferPoolModule(Instance &inst) : instance(inst) {}
+    ~GPUBufferPoolModule() {}
 
-    void sync(Object* object);
+    void sync();
+    void sync_object(Object* ob);
     void end_sync();
 
   };

@@ -11,5 +11,24 @@
 
 #pragma once
 
+#define GROUP_SIZE_STROKEGEN_TEST 512u
+#define GROUP_SIZE_BNPR_SCAN_TEST_SWEEP 1024u
+#define GROUP_SIZE_BNPR_SCAN_TEST_AGGRG 1024u
 
-#define GROUP_SIZE_STROKEGEN_TEST 512
+#define NUM_ITEMS_BNPR_SCAN_TEST 1973581u
+
+
+#ifndef GPU_SHADER
+# define BNPR_SCAN_TEST_DATA_TYPE uint4
+# define BNPR_SCAN_TEST_DATA_TYPE_STR "uvec3"
+
+// remember to update SSBOData_SegScanTest if this changes
+# define BNPR_SEG_SCAN_TEST_STRUCT_TYPE SSBOData_SegScanTest
+# define BNPR_SEG_SCAN_TEST_STRUCT_TYPE_STR "SSBOData_SegScanTest"
+#endif
+
+
+
+
+
+

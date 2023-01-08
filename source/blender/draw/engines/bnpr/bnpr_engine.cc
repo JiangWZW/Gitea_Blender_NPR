@@ -21,6 +21,7 @@
 
 #include "bnpr_instance.hh"
 #include "bnpr_shader.hh"
+#include "intern/mallocn_intern.h"
 
 
 using namespace blender;
@@ -131,20 +132,18 @@ static void bnpr_draw_scene(void *vedata)
 
 
   // TODO: not sure which is better, frame-buffer or texture list?
-  // DefaultFramebufferList *dfbl = DRW_viewport_framebuffer_list_get();
-  DefaultTextureList *dtxl = DRW_viewport_texture_list_get();
+  DefaultFramebufferList *dfbl = DRW_viewport_framebuffer_list_get();
+  // DefaultTextureList *dtxl = DRW_viewport_texture_list_get();
 
   const DRWView *default_view = DRW_view_default_get();
+  const DRWView *active_view = DRW_view_get_active();
   draw::Manager *manager = DRW_manager_get();
   draw::View view("DefaultView", default_view);
+
   // draw passes
-  ved->instance->draw_viewport(*manager, view, dtxl->depth, dtxl->color);
+  ved->instance->draw_viewport(*manager, view);
   // display error msg at the top of the render viewport
   STRNCPY(ved->info, ved->instance->info.c_str());
-
-
-
-  bnpr_draw_scene_legacy(vedata);
 
 
   /* Reset view for other following engines. */
@@ -384,7 +383,7 @@ static void bnpr_engine_free(void)
 
 static void bnpr_render_to_image(void *vedata, struct RenderEngine *engine,
                                     struct RenderLayer *layer,
-                                    const struct rcti *UNUSED(rect)) {
+                                    const struct rcti *rect) {
   UNUSED_VARS(vedata, engine, layer);
 }
 

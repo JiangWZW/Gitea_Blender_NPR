@@ -26,6 +26,8 @@ namespace blender::bnpr
   private:
     /** Compute Passes */
     draw::PassSimple pass_comp_test = {"Strokegen Compute Test"};
+    draw::PassSimple pass_scan_test = {"Bnpr GPU Blelloch Scan Test"};
+    draw::PassSimple pass_segscan_test = {"Bnpr GPU Blelloch SegScan Test"};
 
     /** Instance */
     ShaderModule &shaders_;
@@ -49,20 +51,131 @@ namespace blender::bnpr
     /** Passes Batched by Usages */
     enum eType
     {
-      EXTRACT_MESH_CONTOUR = 0
+      SCAN_TEST = 0,
+      SEGSCAN_TEST
     };
 
     PassSimple& get_compute_pass(eType passType)
     {
       switch (passType) {
-        case EXTRACT_MESH_CONTOUR:
-          return pass_comp_test;
+        case SCAN_TEST:
+          return pass_scan_test;
+        case SEGSCAN_TEST:
+          return pass_segscan_test;
       }
       return pass_comp_test;
     }
 
-    void rebuild_pass_extract_mesh_contour(Object* ob);
+    void sync();
+    void rebuild_pass_extract_mesh_contour(Object* ob, GPUBatch* gpu_batch);
+    void rebuild_pass_scan_test();
+    void rebuild_pass_segscan_test();
+
+
+    template<typename T>
+    void validate_pass_scan_test(bool (*equals)(const T&, const T&));
+
+    template<typename T>
+    bool validate_inter_block_exclusive_scan(
+      const T* bufferInputVals, const T* bufferPrefixSum,
+      bool (*equals)(const T&, const T&),
+      uint num_scan_items, uint blk_size, uint numBlocks
+    );
+    template<typename T>
+    bool validate_exclusive_scan(
+      const T* bufferInputVals, const T* bufferPrefixSum,
+      bool (*equals)(const T&, const T&),
+      uint num_scan_items
+    );
+
 
   };
+
+
+
+  template <typename T>
+  void StrokeGenPassModule::validate_pass_scan_test(bool (*equals)(const T&, const T&))
+  {
+    SSBO_BnprScanData& buf_scan_inputs = buffers_.ssbo_bnpr_in_scan_data_;
+    buf_scan_inputs.read();
+    T* data_scan_inputs = reinterpret_cast<T*>(buf_scan_inputs.data());
+
+    SSBO_BnprScanData& buf_scan_output = buffers_.ssbo_bnpr_out_scan_data_;
+    buf_scan_output.read();
+    T* data_scan_output = reinterpret_cast<T*>(buf_scan_output.data());
+
+    bool valid_inter_block_scan = StrokeGenPassModule::validate_inter_block_exclusive_scan<T>(
+      data_scan_inputs, data_scan_output,
+      equals,
+      buffers_.ubo_bnpr_tree_scan_infos_.num_scan_items,
+      GROUP_SIZE_BNPR_SCAN_TEST_SWEEP * 2u,
+      buffers_.ubo_bnpr_tree_scan_infos_.num_thread_groups
+    );
+    if (!valid_inter_block_scan)
+      fprintf(stderr, "bnpr: error: INTER-BLOCK scan test failed");
+
+    bool valid_global_scan = StrokeGenPassModule::validate_exclusive_scan<T>(
+      data_scan_inputs, data_scan_output,
+      equals,
+      buffers_.ubo_bnpr_tree_scan_infos_.num_scan_items
+    );
+    if (!valid_global_scan)
+      fprintf(stderr, "bnpr: error: GLOBAL scan test failed");
+  }
+
+
+  template <typename T>
+  bool StrokeGenPassModule::validate_inter_block_exclusive_scan(
+    const T* const bufferInputVals, const T* const bufferPrefixSum,
+    bool (*equals)(const T&, const T&),
+    uint num_scan_items, uint blk_size, uint numBlocks
+  )
+  {
+    Vector<int> failedElems(0);
+
+    for (uint blk_id = 0u; blk_id < numBlocks; blk_id++)
+    {
+      for (uint blk_offset = 0u; blk_offset < blk_size - 1u; blk_offset++)
+      {
+        // index might go out of bound
+        uint index = blk_id * blk_size + blk_offset;
+        if (index >= num_scan_items - 2u)
+          break;
+
+        if (false == equals(
+          bufferPrefixSum[index] + bufferInputVals[index],
+          bufferPrefixSum[index + 1]
+        ))
+        {
+          failedElems.append(index);
+        }
+      }
+    }
+
+    if (!failedElems.is_empty())
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+
+  template <typename T>
+  bool StrokeGenPassModule::validate_exclusive_scan(const T* bufferInputVals,
+                                                    const T* bufferPrefixSum,
+                                                    bool (* equals)(const T&, const T&),
+                                                    uint num_scan_items)
+  {
+    return validate_inter_block_exclusive_scan(
+      bufferInputVals, bufferPrefixSum,
+      equals,
+      num_scan_items,
+      num_scan_items,
+      1
+    );
+  }
+
+
 }
 

@@ -60,10 +60,12 @@ namespace blender::bnpr
 
 
 
+
     /** Info string displayed at the top of the render / viewport. */
     std::string info = "";
     /** Debug mode from debug value. */
     // eDebugMode debug_mode = eDebugMode::DEBUG_NONE;
+    uint frame_counter; // for debugging
 
 
 
@@ -87,8 +89,7 @@ namespace blender::bnpr
     void object_sync(Manager& manager, ObjectRef& object_ref);
 
 
-    void draw_viewport(Manager& manager, View& view, GPUTexture* depth_tx,
-                       GPUTexture* color_tx);
+    void draw_viewport(Manager& manager, View& view);
 
 
 

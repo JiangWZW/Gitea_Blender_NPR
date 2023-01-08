@@ -20,6 +20,7 @@
 #include "RE_pipeline.h"
 
 #include "bnpr_instance.hh"
+#include "bnpr_defines.hh"
 
 namespace blender::bnpr
 {
@@ -51,6 +52,7 @@ namespace blender::bnpr
     camera_orig_object = camera_object_;
 
     info = "";
+    frame_counter = 0;
   }
 
   void Instance::update_eval_members()
@@ -78,6 +80,8 @@ namespace blender::bnpr
   void Instance::begin_sync(Manager& manager)
   {
     /* Init draw passes and manager related stuff. (Begin render graph) */
+    strokegen_buffers.sync();
+    strokegen_passes.sync();
   }
 
   void Instance::end_sync(Manager&)
@@ -132,11 +136,20 @@ namespace blender::bnpr
   /** \name Rendering
    * \{ */
 
-  void Instance::draw_viewport(Manager& manager, View& view, GPUTexture* depth_tx,
-    GPUTexture* color_tx)
+  void Instance::draw_viewport(Manager& manager, View& view)
   {
     /* Submit passes here. (Execute render graph) */
-    manager.submit(strokegen_passes.get_compute_pass(StrokeGenPassModule::eType::EXTRACT_MESH_CONTOUR), view);
+    // manager.submit(strokegen_passes.get_compute_pass(StrokeGenPassModule::eType::SCAN_TEST), view);
+    manager.submit(strokegen_passes.get_compute_pass(StrokeGenPassModule::eType::SEGSCAN_TEST), view);
+
+    if (frame_counter % 32 == 0)
+    {
+      // strokegen_passes.validate_pass_scan_test<BNPR_SCAN_TEST_DATA_TYPE>(
+      //   [](const BNPR_SCAN_TEST_DATA_TYPE& a, const BNPR_SCAN_TEST_DATA_TYPE& b) {return a == b;}
+      // );
+    }
+    frame_counter = (frame_counter + 1) % 100000000;
+
   }
 
   /** \} */

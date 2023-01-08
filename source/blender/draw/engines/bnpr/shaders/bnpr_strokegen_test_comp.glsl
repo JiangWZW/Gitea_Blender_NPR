@@ -7,5 +7,5 @@
 
 void main()
 {
-
+  buf_test[0] = buf_ibo[0];
 }
