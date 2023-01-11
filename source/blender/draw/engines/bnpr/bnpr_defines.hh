@@ -19,7 +19,7 @@
 
 
 #ifndef GPU_SHADER
-# define BNPR_SCAN_TEST_DATA_TYPE uint4
+# define BNPR_SCAN_TEST_DATA_TYPE uint3
 # define BNPR_SCAN_TEST_DATA_TYPE_STR "uvec3"
 
 // remember to update SSBOData_SegScanTest if this changes

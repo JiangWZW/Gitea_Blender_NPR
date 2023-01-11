@@ -129,14 +129,14 @@ void main()
 	T scanval_A, scanval_B;
 	uint hf_A, hf_B;
 	{ /* init & store random scan input vals */
-		hf_A = 1u & (wang_hash(scan_ids.global_x2.x + scan_ids.lds_x2.x) % 892u);
-		scanval_A = T(
+		hf_A = 0xffffffff; /**uint(scan_ids.global_x2.x % 3u == 0u);*/ /**1u & (wang_hash(scan_ids.global_x2.x + scan_ids.lds_x2.x) % 892u);*/
+		scanval_A = T(scan_ids.global_x2.x); /**T(
 			wang_hash(scan_ids.global_x2.y + scan_ids.lds_x2.x) % 12u
-		);
-		hf_B = 1u & (wang_hash(scan_ids.global_x2.y + scan_ids.lds_x2.y) % 892u);
-		scanval_B = T(
+		);*/
+		hf_B = 0xffffffff;/**uint(scan_ids.global_x2.y % 3u == 0u);*//**1u & (wang_hash(scan_ids.global_x2.y + scan_ids.lds_x2.y) % 892u)*/;
+		scanval_B = T(scan_ids.global_x2.y); /**T(
 			wang_hash(scan_ids.global_x2.x + scan_ids.lds_x2.y) % 12u
-		);
+		);*/
 		/* avoid invalid loads */
 		_FUNC_CLEAN_SEG_SCAN_DATA(
 			scan_ids, ubo_bnpr_tree_scan_infos_.num_scan_items,
