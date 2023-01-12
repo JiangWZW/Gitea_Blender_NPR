@@ -123,27 +123,29 @@ void main()
 void main()
 {
 	const uint groupId =  gl_LocalInvocationID.x;
+	const uint idx = gl_GlobalInvocationID.x;
 
 	TreeScanIndices scan_ids = GetTreeScanIndices(groupId, gl_WorkGroupID.x);
 
 	T scanval_A, scanval_B;
 	uint hf_A, hf_B;
 	{ /* init & store random scan input vals */
-		hf_A = 0xffffffff; /**uint(scan_ids.global_x2.x % 3u == 0u);*/ /**1u & (wang_hash(scan_ids.global_x2.x + scan_ids.lds_x2.x) % 892u);*/
-		scanval_A = T(scan_ids.global_x2.x); /**T(
+		hf_A = 1u & (wang_hash(scan_ids.global_x2.x + scan_ids.lds_x2.x) % 892u);
+		if (idx == 0) hf_A = 0u;
+		scanval_A = T(
 			wang_hash(scan_ids.global_x2.y + scan_ids.lds_x2.x) % 12u
-		);*/
-		hf_B = 0xffffffff;/**uint(scan_ids.global_x2.y % 3u == 0u);*//**1u & (wang_hash(scan_ids.global_x2.y + scan_ids.lds_x2.y) % 892u)*/;
-		scanval_B = T(scan_ids.global_x2.y); /**T(
+		);
+		hf_B = 1u & (wang_hash(scan_ids.global_x2.y + scan_ids.lds_x2.y) % 892u);
+		scanval_B = T(
 			wang_hash(scan_ids.global_x2.x + scan_ids.lds_x2.y) % 12u
-		);*/
+		);
 		/* avoid invalid loads */
 		_FUNC_CLEAN_SEG_SCAN_DATA(
 			scan_ids, ubo_bnpr_tree_scan_infos_.num_scan_items,
 			hf_A, scanval_A, hf_B, scanval_B /* <- inout */
 		);
-		bnpr_in_scan_data_buf_[scan_ids.global_x2.x] = SEGSCAN_STRUCT_TYPE(hf_A, scanval_A);
-		bnpr_in_scan_data_buf_[scan_ids.global_x2.y] = SEGSCAN_STRUCT_TYPE(hf_B, scanval_B);
+		bnpr_in_scan_data_buf_[scan_ids.global_x2.x] = SEGSCAN_STRUCT_TYPE(scanval_A, hf_A);
+		bnpr_in_scan_data_buf_[scan_ids.global_x2.y] = SEGSCAN_STRUCT_TYPE(scanval_B, hf_B);
 	}
 
 
@@ -163,24 +165,24 @@ void main()
 
 	/* store scan results */
 	bnpr_out_scan_data_buf_[scan_ids.global_x2.x] = SEGSCAN_STRUCT_TYPE(
-		tree_seg_scan_encode_upsweep_hfs(hf_A, headFlagPartialSum_A),
-		scanRes_ai
+		scanRes_ai,
+		tree_seg_scan_encode_upsweep_hfs(hf_A, headFlagPartialSum_A)
 	);
 	bnpr_out_scan_data_buf_[scan_ids.global_x2.y] = SEGSCAN_STRUCT_TYPE(
-		tree_seg_scan_encode_upsweep_hfs(hf_B, headFlagPartialSum_B),
-		scanRes_bi
+		scanRes_bi,
+		tree_seg_scan_encode_upsweep_hfs(hf_B, headFlagPartialSum_B)
 	);
 
 	/* store block aggregate */
 	if (groupId == gl_WorkGroupSize.x - 1)
 	{
 		bnpr_scan_block_sum_buf_[gl_WorkGroupID.x] = SEGSCAN_STRUCT_TYPE(
+			/* different from ordinary scan, we store exclusive sum here */
+			scanval_B,
 			tree_seg_scan_encode_upsweep_hfs(
 				headFlagPartialSum_B,  /* or sum of block hfs */
 				TREE_SCAN_CACHE_HF[0]  /* original hf of block */
-			),
-			/* different from ordinary scan, we store exclusive sum here */
-			scanval_B
+			)
 		);
 	}
 }
@@ -237,8 +239,8 @@ void main()
 
 
 	/* store scan results */
-	bnpr_scan_block_sum_buf_[scan_ids.global_x2.x] = SEGSCAN_STRUCT_TYPE(0, scan_res_A); /* no hf needed */
-	bnpr_scan_block_sum_buf_[scan_ids.global_x2.y] = SEGSCAN_STRUCT_TYPE(0, scan_res_B); /* no hf needed */
+	bnpr_scan_block_sum_buf_[scan_ids.global_x2.x] = SEGSCAN_STRUCT_TYPE(scan_res_A, 0); /* no hf needed */
+	bnpr_scan_block_sum_buf_[scan_ids.global_x2.y] = SEGSCAN_STRUCT_TYPE(scan_res_B, 0); /* no hf needed */
 }
 #endif
 
@@ -273,7 +275,7 @@ void main()
 		scan_res_A, scan_res_B
 	);
 
-	bnpr_out_scan_data_buf_[scan_ids.global_x2.x] = SEGSCAN_STRUCT_TYPE(block_scan_res_A.hf, scan_res_A);
-	bnpr_out_scan_data_buf_[scan_ids.global_x2.y] = SEGSCAN_STRUCT_TYPE(block_scan_res_B.hf, scan_res_B);
+	bnpr_out_scan_data_buf_[scan_ids.global_x2.x] = SEGSCAN_STRUCT_TYPE(scan_res_A, block_scan_res_A.hf);
+	bnpr_out_scan_data_buf_[scan_ids.global_x2.y] = SEGSCAN_STRUCT_TYPE(scan_res_B, block_scan_res_B.hf);
 }
 #endif

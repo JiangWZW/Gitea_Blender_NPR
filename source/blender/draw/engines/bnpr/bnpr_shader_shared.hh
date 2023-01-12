@@ -124,12 +124,12 @@ using namespace draw;
 
   struct SSBOData_SegScanTest
   {
-    uint hf;
 #ifndef GPU_SHADER
     uint3 val;
 #else
     uvec3 val;
 #endif
+    uint hf;
   };
   // BLI_STATIC_ASSERT_ALIGN(SSBOData_SegScanTest, 16)
 
