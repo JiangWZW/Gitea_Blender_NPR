@@ -100,7 +100,7 @@ GPU_SHADER_CREATE_INFO(bnpr_scan_float_add)
   .define("SCAN_FUNCTION_TAG", "_f32_add")
 ;
 
-GPU_SHADER_CREATE_INFO(bnpr_scan_test_inputs)
+GPU_SHADER_CREATE_INFO(bnpr_scan_inputs_test)
   .additional_info("bnpr_scan_uvec3_add")
 ;
 
@@ -123,7 +123,7 @@ GPU_SHADER_CREATE_INFO(bnpr_strokegen_test_xxx)
 
 GPU_SHADER_CREATE_INFO(bnpr_scan_test_upsweep)
   .do_static_compilation(true)
-  .additional_info("bnpr_scan_test_inputs")
+  .additional_info("bnpr_scan_inputs_test")
   .define("_KERNEL_MULTI_COMPILE__TREE_SCAN_UPSWEEP", "1")
   .storage_buf(0, Qualifier::READ_WRITE, BNPR_SCAN_TEST_DATA_TYPE_STR, "bnpr_in_scan_data_buf_[]")
   .storage_buf(1, Qualifier::READ_WRITE, BNPR_SCAN_TEST_DATA_TYPE_STR, "bnpr_out_scan_data_buf_[]")
@@ -135,7 +135,7 @@ GPU_SHADER_CREATE_INFO(bnpr_scan_test_upsweep)
 
 GPU_SHADER_CREATE_INFO(bnpr_scan_test_aggregate)
   .do_static_compilation(true)
-  .additional_info("bnpr_scan_test_inputs")
+  .additional_info("bnpr_scan_inputs_test")
   .define("_KERNEL_MULTI_COMPILE__TREE_SCAN_AGGREGATE", "1")
   .storage_buf(0, Qualifier::READ_WRITE, BNPR_SCAN_TEST_DATA_TYPE_STR, "bnpr_scan_block_sum_buf_[]")
   .local_group_size(GROUP_SIZE_BNPR_SCAN_TEST_AGGRG) /* <== from "bnpr_defines.hh" */
@@ -144,7 +144,7 @@ GPU_SHADER_CREATE_INFO(bnpr_scan_test_aggregate)
 
 GPU_SHADER_CREATE_INFO(bnpr_scan_test_dwsweep)
   .do_static_compilation(true)
-  .additional_info("bnpr_scan_test_inputs")
+  .additional_info("bnpr_scan_inputs_test")
   .define("_KERNEL_MULTI_COMPILE__TREE_SCAN_DWSWEEP", "1")
   .storage_buf(0, Qualifier::READ_WRITE, BNPR_SCAN_TEST_DATA_TYPE_STR, "bnpr_out_scan_data_buf_[]")
   .storage_buf(1, Qualifier::READ, BNPR_SCAN_TEST_DATA_TYPE_STR, "bnpr_scan_block_sum_buf_[]")

@@ -19,9 +19,8 @@ namespace blender::bnpr
     rebuild_pass_segscan_test();
   }
 
-  void StrokeGenPassModule::rebuild_pass_extract_mesh_contour(Object* ob, GPUBatch* gpu_batch)
+  void StrokeGenPassModule::rebuild_pass_extract_mesh_geom(Object* ob, GPUBatch* gpu_batch)
   {
-
   }
 
   void StrokeGenPassModule::rebuild_pass_scan_test()

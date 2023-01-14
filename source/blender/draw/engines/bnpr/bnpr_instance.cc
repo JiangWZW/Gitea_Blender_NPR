@@ -147,6 +147,18 @@ namespace blender::bnpr
       // strokegen_passes.validate_pass_scan_test<BNPR_SCAN_TEST_DATA_TYPE>(
       //   [](const BNPR_SCAN_TEST_DATA_TYPE& a, const BNPR_SCAN_TEST_DATA_TYPE& b) {return a == b;}
       // );
+      strokegen_passes.validate_segscan<SSBOData_SegScanTest>(
+        [](const SSBOData_SegScanTest& a, const SSBOData_SegScanTest& b) { return a.val == b.val; },
+        [](const SSBOData_SegScanTest& a) { return a.hf; },
+        [](const SSBOData_SegScanTest& a, const SSBOData_SegScanTest& b)
+        {
+          return SSBOData_SegScanTest{a.val + b.val, 0};
+        },
+        SSBOData_SegScanTest{
+          uint3(0u, 0u, 0u), 1u
+        },
+        false
+      );
     }
     frame_counter = (frame_counter + 1) % 100000000;
 

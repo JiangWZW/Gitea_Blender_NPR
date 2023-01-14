@@ -75,7 +75,7 @@ namespace blender::bnpr
     //  strokegen_passes.dispatch_extract_mesh_contour(ob);
     //  strokegen_passes.dispatch_XXX(...);
     //  ... ... ...
-    inst_.strokegen_passes.rebuild_pass_extract_mesh_contour(ob, geobatch);
+    inst_.strokegen_passes.rebuild_pass_extract_mesh_geom(ob, geobatch);
 
 
 
