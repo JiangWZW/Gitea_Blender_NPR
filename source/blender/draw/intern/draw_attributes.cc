@@ -4,20 +4,15 @@
 #include "draw_attributes.hh"
 
 /* Return true if the given DRW_AttributeRequest is already in the requests. */
-static bool drw_attributes_has_request(const DRW_Attributes *requests, DRW_AttributeRequest req)
+static bool drw_attributes_has_request(const DRW_Attributes *requests,
+                                       const DRW_AttributeRequest &req)
 {
   for (int i = 0; i < requests->num_requests; i++) {
-    const DRW_AttributeRequest src_req = requests->requests[i];
-    if (src_req.domain != req.domain) {
-      continue;
+    const DRW_AttributeRequest &src_req = requests->requests[i];
+    if (src_req.domain == req.domain && src_req.layer_index == req.layer_index &&
+        src_req.cd_type == req.cd_type) {
+      return true;
     }
-    if (src_req.layer_index != req.layer_index) {
-      continue;
-    }
-    if (src_req.cd_type != req.cd_type) {
-      continue;
-    }
-    return true;
   }
   return false;
 }
@@ -58,6 +53,33 @@ bool drw_attributes_overlap(const DRW_Attributes *a, const DRW_Attributes *b)
     }
   }
 
+  return true;
+}
+
+void drw_attributes_clear(MutableSpan<DRW_Attributes> attributes)
+{
+  for (DRW_Attributes &_attributes : attributes) {
+    drw_attributes_clear(&_attributes);
+  }
+}
+
+void drw_attributes_merge(MutableSpan<DRW_Attributes> dst,
+                          Span<DRW_Attributes> src,
+                          std::mutex &render_mutex)
+{
+  std::lock_guard lock{render_mutex};
+  for (int i : dst.index_range()) {
+    drw_attributes_merge_requests(&src[i], &dst[i]);
+  }
+}
+
+bool drw_attributes_overlap(Span<DRW_Attributes> a, Span<DRW_Attributes> b)
+{
+  for (int i : a.index_range()) {
+    if (!drw_attributes_overlap(&a[i], &b[i])) {
+      return false;
+    }
+  }
   return true;
 }
 

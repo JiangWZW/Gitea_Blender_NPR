@@ -22,6 +22,9 @@
 #include "GPU_shader.h"
 #include "GPU_vertex_format.h"
 
+using blender::MutableSpan;
+using blender::Span;
+
 struct DRW_AttributeRequest {
   eCustomDataType cd_type;
   int layer_index;
@@ -59,6 +62,15 @@ void drw_attributes_merge(DRW_Attributes *dst,
 
 /* Return true if all requests in b are in a. */
 bool drw_attributes_overlap(const DRW_Attributes *a, const DRW_Attributes *b);
+
+void drw_attributes_clear(MutableSpan<DRW_Attributes> attributes);
+
+void drw_attributes_merge(MutableSpan<DRW_Attributes> dst,
+                          Span<DRW_Attributes> src,
+                          std::mutex &render_mutex);
+
+/* Return true if all requests in b are in a. */
+bool drw_attributes_overlap(Span<DRW_Attributes> a, Span<DRW_Attributes> b);
 
 DRW_AttributeRequest *drw_attributes_add_request(DRW_Attributes *attrs,
                                                  const char *name,

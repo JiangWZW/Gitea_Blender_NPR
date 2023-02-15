@@ -322,7 +322,14 @@ static void extract_attr(const MeshRenderData *mr,
 static void extract_attr_init(
     const MeshRenderData *mr, MeshBatchCache *cache, void *buf, void * /*tls_data*/, int index)
 {
-  const DRW_Attributes *attrs_used = &cache->attr_used;
+  DRW_Attributes merged_attrs;
+  drw_attributes_clear(&merged_attrs);
+  std::mutex mutex;
+  for (DRW_Attributes &attribs : cache->attr_used) {
+    /* TODO(Miguel Pozo): We don't need a mutex here */
+    drw_attributes_merge(&merged_attrs, &attribs, mutex);
+  }
+  const DRW_Attributes *attrs_used = &merged_attrs;
   const DRW_AttributeRequest &request = attrs_used->requests[index];
 
   GPUVertBuf *vbo = static_cast<GPUVertBuf *>(buf);
@@ -339,7 +346,14 @@ static void extract_attr_init_subdiv(const DRWSubdivCache *subdiv_cache,
                                      void * /*tls_data*/,
                                      int index)
 {
-  const DRW_Attributes *attrs_used = &cache->attr_used;
+  DRW_Attributes merged_attrs;
+  drw_attributes_clear(&merged_attrs);
+  std::mutex mutex;
+  for (DRW_Attributes &attribs : cache->attr_used) {
+    /* TODO(Miguel Pozo): We don't need a mutex here */
+    drw_attributes_merge(&merged_attrs, &attribs, mutex);
+  }
+  const DRW_Attributes *attrs_used = &merged_attrs;
   const DRW_AttributeRequest &request = attrs_used->requests[index];
 
   Mesh *coarse_mesh = subdiv_cache->mesh;

@@ -282,7 +282,8 @@ struct MeshBatchCache {
 
   DRW_MeshCDMask cd_used, cd_needed, cd_used_over_time;
 
-  DRW_Attributes attr_used, attr_needed, attr_used_over_time;
+  /* One for each material slot */
+  blender::Vector<DRW_Attributes> attr_used, attr_needed, attr_used_over_time;
 
   int lastmatch;
 

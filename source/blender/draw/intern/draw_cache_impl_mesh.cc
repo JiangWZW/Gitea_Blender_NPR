@@ -274,7 +274,7 @@ static DRW_MeshCDMask mesh_cd_calc_used_gpu_layers(const Object *object,
                                                    const Mesh *me,
                                                    struct GPUMaterial **gpumat_array,
                                                    int gpumat_array_len,
-                                                   DRW_Attributes *attributes)
+                                                   blender::MutableSpan<DRW_Attributes> attributes)
 {
   const Mesh *me_final = editmesh_final_or_this(object, me);
   const CustomData *cd_ldata = mesh_cd_ldata_get_from_mesh(me_final);
@@ -398,7 +398,7 @@ static DRW_MeshCDMask mesh_cd_calc_used_gpu_layers(const Object *object,
         case CD_PROP_FLOAT:
         case CD_PROP_FLOAT2: {
           if (layer != -1 && domain.has_value()) {
-            drw_attributes_add_request(attributes, name, type, layer, *domain);
+            drw_attributes_add_request(&attributes[i], name, type, layer, *domain);
           }
           break;
         }
@@ -578,11 +578,12 @@ static void mesh_batch_cache_init(Object *object, Mesh *me)
   MeshBatchCache *cache = static_cast<MeshBatchCache *>(me->runtime->batch_cache);
 
   if (!cache) {
-    me->runtime->batch_cache = MEM_cnew<MeshBatchCache>(__func__);
+    me->runtime->batch_cache = MEM_new<MeshBatchCache>(__func__);
     cache = static_cast<MeshBatchCache *>(me->runtime->batch_cache);
   }
   else {
-    memset(cache, 0, sizeof(*cache));
+    cache = {};
+    // memset(cache, 0, sizeof(*cache));
   }
 
   cache->is_editmode = me->edit_mesh != nullptr;
@@ -599,6 +600,11 @@ static void mesh_batch_cache_init(Object *object, Mesh *me)
   }
 
   cache->mat_len = mesh_render_mat_len_get(object, me);
+  DRW_Attributes attrs_empty;
+  drw_attributes_clear(&attrs_empty);
+  cache->attr_needed.resize(cache->mat_len, attrs_empty);
+  cache->attr_used.resize(cache->mat_len, attrs_empty);
+  cache->attr_used_over_time.resize(cache->mat_len, attrs_empty);
   cache->surface_per_mat = static_cast<GPUBatch **>(
       MEM_callocN(sizeof(*cache->surface_per_mat) * cache->mat_len, __func__));
   cache->tris_per_mat = static_cast<GPUIndexBuf **>(
@@ -848,7 +854,7 @@ void DRW_mesh_batch_cache_free(void *batch_cache)
 {
   if (batch_cache) {
     mesh_batch_cache_clear(static_cast<MeshBatchCache *>(batch_cache));
-    MEM_freeN(batch_cache);
+    MEM_delete(static_cast<MeshBatchCache *>(batch_cache));
   }
 }
 
@@ -969,13 +975,20 @@ void DRW_mesh_get_attributes(Object *object,
                              DRW_Attributes *r_attrs,
                              DRW_MeshCDMask *r_cd_needed)
 {
-  DRW_Attributes attrs_needed;
-  drw_attributes_clear(&attrs_needed);
+  blender::Vector<DRW_Attributes> attrs_needed(gpumat_array_len);
+  drw_attributes_clear(attrs_needed);
   DRW_MeshCDMask cd_needed = mesh_cd_calc_used_gpu_layers(
-      object, me, gpumat_array, gpumat_array_len, &attrs_needed);
+      object, me, gpumat_array, gpumat_array_len, attrs_needed);
 
   if (r_attrs) {
-    *r_attrs = attrs_needed;
+    DRW_Attributes merged_attrs;
+    drw_attributes_clear(&merged_attrs);
+    std::mutex mutex;
+    for (DRW_Attributes &attribs : attrs_needed) {
+      /* TODO(Miguel Pozo): We don't need a mutex here */
+      drw_attributes_merge(&merged_attrs, &attribs, mutex);
+    }
+    *r_attrs = merged_attrs;
   }
 
   if (r_cd_needed) {
@@ -989,15 +1002,15 @@ GPUBatch **DRW_mesh_batch_cache_get_surface_shaded(Object *object,
                                                    uint gpumat_array_len)
 {
   MeshBatchCache *cache = mesh_batch_cache_get(me);
-  DRW_Attributes attrs_needed;
-  drw_attributes_clear(&attrs_needed);
+  blender::Vector<DRW_Attributes> attrs_needed(gpumat_array_len);
+  drw_attributes_clear(attrs_needed);
   DRW_MeshCDMask cd_needed = mesh_cd_calc_used_gpu_layers(
-      object, me, gpumat_array, gpumat_array_len, &attrs_needed);
+      object, me, gpumat_array, gpumat_array_len, attrs_needed);
 
   BLI_assert(gpumat_array_len == cache->mat_len);
 
   mesh_cd_layers_type_merge(&cache->cd_needed, cd_needed);
-  drw_attributes_merge(&cache->attr_needed, &attrs_needed, me->runtime->render_mutex);
+  drw_attributes_merge(cache->attr_needed, attrs_needed, me->runtime->render_mutex);
   mesh_batch_cache_request_surface_batches(cache);
   return cache->surface_per_mat;
 }
@@ -1025,7 +1038,9 @@ GPUBatch *DRW_mesh_batch_cache_get_surface_vertpaint(Object *object, Mesh *me)
   DRW_Attributes attrs_needed{};
   request_active_and_default_color_attributes(*object, *me, attrs_needed);
 
-  drw_attributes_merge(&cache->attr_needed, &attrs_needed, me->runtime->render_mutex);
+  for (DRW_Attributes &cache_attrs : cache->attr_needed) {
+    drw_attributes_merge(&cache_attrs, &attrs_needed, me->runtime->render_mutex);
+  }
 
   mesh_batch_cache_request_surface_batches(cache);
   return cache->batch.surface;
@@ -1038,7 +1053,9 @@ GPUBatch *DRW_mesh_batch_cache_get_surface_sculpt(Object *object, Mesh *me)
   DRW_Attributes attrs_needed{};
   request_active_and_default_color_attributes(*object, *me, attrs_needed);
 
-  drw_attributes_merge(&cache->attr_needed, &attrs_needed, me->runtime->render_mutex);
+  for (DRW_Attributes &cache_attrs : cache->attr_needed) {
+    drw_attributes_merge(&cache_attrs, &attrs_needed, me->runtime->render_mutex);
+  }
 
   mesh_batch_cache_request_surface_batches(cache);
   return cache->batch.surface;
@@ -1287,7 +1304,7 @@ void DRW_mesh_batch_cache_free_old(Mesh *me, int ctime)
     cache->lastmatch = ctime;
   }
 
-  if (drw_attributes_overlap(&cache->attr_used_over_time, &cache->attr_used)) {
+  if (drw_attributes_overlap(cache->attr_used_over_time, cache->attr_used)) {
     cache->lastmatch = ctime;
   }
 
@@ -1296,7 +1313,7 @@ void DRW_mesh_batch_cache_free_old(Mesh *me, int ctime)
   }
 
   mesh_cd_layers_type_clear(&cache->cd_used_over_time);
-  drw_attributes_clear(&cache->attr_used_over_time);
+  drw_attributes_clear(cache->attr_used_over_time);
 }
 
 static void drw_add_attributes_vbo(GPUBatch *batch,
@@ -1428,7 +1445,7 @@ void DRW_mesh_batch_cache_create_requested(struct TaskGraph *task_graph,
     /* TODO(fclem): We could be a bit smarter here and only do it per
      * material. */
     bool cd_overlap = mesh_cd_layers_type_overlap(cache->cd_used, cache->cd_needed);
-    bool attr_overlap = drw_attributes_overlap(&cache->attr_used, &cache->attr_needed);
+    bool attr_overlap = drw_attributes_overlap(cache->attr_used, cache->attr_needed);
     if (cd_overlap == false || attr_overlap == false) {
       FOREACH_MESH_BUFFER_CACHE (cache, mbc) {
         if ((cache->cd_used.uv & cache->cd_needed.uv) != cache->cd_needed.uv) {
@@ -1445,7 +1462,7 @@ void DRW_mesh_batch_cache_create_requested(struct TaskGraph *task_graph,
         if (cache->cd_used.sculpt_overlays != cache->cd_needed.sculpt_overlays) {
           GPU_VERTBUF_DISCARD_SAFE(mbc->buff.vbo.sculpt_data);
         }
-        if (!drw_attributes_overlap(&cache->attr_used, &cache->attr_needed)) {
+        if (!drw_attributes_overlap(cache->attr_used, cache->attr_needed)) {
           for (int i = 0; i < GPU_MAX_ATTR; i++) {
             GPU_VERTBUF_DISCARD_SAFE(mbc->buff.vbo.attr[i]);
           }
@@ -1460,14 +1477,14 @@ void DRW_mesh_batch_cache_create_requested(struct TaskGraph *task_graph,
       cache->batch_ready &= ~(MBC_SURFACE);
 
       mesh_cd_layers_type_merge(&cache->cd_used, cache->cd_needed);
-      drw_attributes_merge(&cache->attr_used, &cache->attr_needed, me->runtime->render_mutex);
+      drw_attributes_merge(cache->attr_used, cache->attr_needed, me->runtime->render_mutex);
     }
     mesh_cd_layers_type_merge(&cache->cd_used_over_time, cache->cd_needed);
     mesh_cd_layers_type_clear(&cache->cd_needed);
 
     drw_attributes_merge(
-        &cache->attr_used_over_time, &cache->attr_needed, me->runtime->render_mutex);
-    drw_attributes_clear(&cache->attr_needed);
+        cache->attr_used_over_time, cache->attr_needed, me->runtime->render_mutex);
+    drw_attributes_clear(cache->attr_needed);
   }
 
   if (batch_requested & MBC_EDITUV) {
@@ -1561,7 +1578,15 @@ void DRW_mesh_batch_cache_create_requested(struct TaskGraph *task_graph,
     if (cache->cd_used.uv != 0) {
       DRW_vbo_request(cache->batch.surface, &mbuflist->vbo.uv);
     }
-    drw_add_attributes_vbo(cache->batch.surface, mbuflist, &cache->attr_used);
+
+    DRW_Attributes merged_attrs;
+    drw_attributes_clear(&merged_attrs);
+    std::mutex mutex;
+    for (DRW_Attributes &attribs : cache->attr_used) {
+      /* TODO(Miguel Pozo): We don't need a mutex here */
+      drw_attributes_merge(&merged_attrs, &attribs, mutex);
+    }
+    // drw_add_attributes_vbo(cache->batch.surface, mbuflist, &merged_attrs);
   }
   assert_deps_valid(MBC_ALL_VERTS, {BUFFER_INDEX(vbo.pos_nor)});
   if (DRW_batch_requested(cache->batch.all_verts, GPU_PRIM_POINTS)) {
@@ -1660,7 +1685,11 @@ void DRW_mesh_batch_cache_create_requested(struct TaskGraph *task_graph,
       if (cache->cd_used.orco != 0) {
         DRW_vbo_request(cache->surface_per_mat[i], &mbuflist->vbo.orco);
       }
-      drw_add_attributes_vbo(cache->surface_per_mat[i], mbuflist, &cache->attr_used);
+      printf("MAT: %d\n", i);
+      for (int j : IndexRange(cache->attr_used[i].num_requests)) {
+        printf("%s\n", cache->attr_used[i].requests[j].attribute_name);
+      }
+      drw_add_attributes_vbo(cache->surface_per_mat[i], mbuflist, &cache->attr_used[i]);
     }
   }
 
