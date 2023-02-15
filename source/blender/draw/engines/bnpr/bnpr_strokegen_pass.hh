@@ -27,12 +27,15 @@ private:
   draw::PassSimple pass_comp_test = {"Strokegen Compute Test"};
   draw::PassSimple pass_scan_test = {"Bnpr GPU Blelloch Scan Test"};
   draw::PassSimple pass_segscan_test = {"Bnpr GPU Blelloch SegScan Test"};
+  draw::PassSimple pass_extract_geom = {"StrokeGen Extract Geometry"};
   
   /** Instance */
   ShaderModule &shaders_;
   GPUBufferPoolModule &buffers_;
   GPUTexturePoolModule &textures_;
 
+  /** Geometry  */
+  
 
 public:
   StrokeGenPassModule(
@@ -44,43 +47,48 @@ public:
       buffers_(strokegen_buffers),
       textures_(strokegen_textures)
   {
-  };
-
-  ~StrokeGenPassModule()
-  {
-  };
-
-  /** Passes Batched by Usages */
-  enum eType {
-    SCAN_TEST = 0,
-    SEGSCAN_TEST
-  };
-
-  PassSimple &get_compute_pass(eType passType)
-  {
-    switch (passType) {
-      case SCAN_TEST:
-        return pass_scan_test;
-      case SEGSCAN_TEST:
-        return pass_segscan_test;
-    }
-    return pass_comp_test;
   }
 
-  void sync();
+  ~StrokeGenPassModule() {}
+
   
-  /**
-   * \brief Extract geometry info from given GPUBatch of a mesh object.
-   * \param ob Mesh Object
-   * \param gpu_batch Mesh geometry stored in GPUBatch, ib stored with line adjacency info.
-   */
-  void rebuild_pass_extract_mesh_geom(Object *ob, GPUBatch *gpu_batch);
+
+  /* -------------------------------------------------------------------- */
+  /** \name Passes
+     * \{ */
+  enum eType
+  {
+    SCAN_TEST = 0,
+    SEGSCAN_TEST,
+    GEOM_EXTRACTION, 
+  };
+
+  PassSimple& get_compute_pass(eType passType);
+  /** \} */
+
+
+  
+  /* -------------------------------------------------------------------- */
+  /** \name Sync with Draw Module
+     * \{ */
+  void on_begin_sync();
+  /** \} */
+
+
+  
+  /* -------------------------------------------------------------------- */
+  /** \name Rebuild Render Passes
+     * \{ */
+  void reset_pass_extract_mesh_geom();
+  void rebuild_sub_pass_extract_mesh_geom(Object* ob, GPUBatch* gpu_batch_line_adj);
 
   void rebuild_pass_scan_test();
-
   void rebuild_pass_segscan_test();
+  /** \} */
 
 
+
+  
   /* -------------------------------------------------------------------- */
   /** \name Scan Tester
    * \{ */
@@ -103,8 +111,7 @@ public:
       uint num_scan_items
       );
   /** \} */
-
-
+  
   /* -------------------------------------------------------------------- */
   /** \name Segment Scan Tester
    * \{ */
@@ -127,9 +134,9 @@ public:
     T zero_value,
     bool inclusive = false
   );
-
   /** \} */
 
+private:
 
 };
 

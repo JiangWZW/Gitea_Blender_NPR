@@ -25,8 +25,11 @@ namespace blender::bnpr
     /** Compute Resources */
     SSBO_StrokeGenTest ssbo_bnpr_test_;
 
-    SSBO_BnprScanData ssbo_bnpr_in_scan_data_;
-    SSBO_BnprScanData ssbo_bnpr_out_scan_data_;
+    SSBO_StrokeGenMeshPool      ssbo_bnpr_mesh_pool_;                
+    SSBO_StrokeGenMeshPoolArgs  ssbo_bnpr_mesh_pool_args_;   
+    
+    SSBO_BnprScanData       ssbo_bnpr_in_scan_data_;
+    SSBO_BnprScanData       ssbo_bnpr_out_scan_data_;
     SSBO_BnprScanAggregates ssbo_bnpr_scan_block_sum_;
 
     UBO_BnprTreeScan ubo_bnpr_tree_scan_infos_;
@@ -35,7 +38,7 @@ namespace blender::bnpr
     GPUBufferPoolModule(Instance &inst) : instance(inst) {}
     ~GPUBufferPoolModule() {}
 
-    void sync();
+    void on_begin_sync();
     void sync_object(Object* ob);
     void end_sync();
 

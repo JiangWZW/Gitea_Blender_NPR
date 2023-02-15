@@ -34,12 +34,12 @@ namespace blender::bnpr
     SyncModule(Instance &inst) : inst_(inst) {};
     ~SyncModule(){};
 
-    ObjectHandle &sync_object(Object *ob);
+    BnprDrawData &sync_object(Object *ob);
     WorldHandle &sync_world(::World *world) {};
     SceneHandle &sync_scene(::Scene *scene) {};
 
     void sync_mesh(Object *ob,
-                   ObjectHandle &ob_handle,
+                   BnprDrawData &ob_draw_data,
                    draw::ResourceHandle res_handle,
                    const draw::ObjectRef &ob_ref);
   };

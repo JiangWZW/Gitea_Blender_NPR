@@ -314,6 +314,8 @@ set(SRC
   engines/bnpr/bnpr_strokegen_buffer_pool.hh
   engines/bnpr/bnpr_strokegen_texture_pool.hh
   engines/bnpr/bnpr_strokegen_pass.hh
+  engines/bnpr/bnpr_strokegen_geom_extract.hh
+  engines/bnpr/bnpr_strokegen_geom_extract.cc
 )
 
 set(LIB
@@ -709,6 +711,7 @@ set(GLSL_SRC
   engines/bnpr/shaders/bnpr_scan_no_subgroup_codegen_lib.glsl
   engines/bnpr/shaders/bnpr_strokegen_test_comp.glsl
   engines/bnpr/shaders/bnpr_scan_test_comp.glsl
+  engines/bnpr/shaders/bnpr_geom_extract_comp.glsl
 
   engines/bnpr/bnpr_defines.hh
   engines/bnpr/bnpr_shader_shared.hh

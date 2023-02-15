@@ -11,12 +11,22 @@
 
 #pragma once
 
+/* -------------------------------------------------------------------- */
+/** Geometry Extraction from GPUBatch(es)
+ * \{ */
+#define GROUP_SIZE_STROKEGEN_GEOM_EXTRACT 256u
+/** \} */
+
+
+
+/* -------------------------------------------------------------------- */
+/** \Scan Test
+ * \{ */
 #define GROUP_SIZE_STROKEGEN_TEST 512u
 #define GROUP_SIZE_BNPR_SCAN_TEST_SWEEP 1024u
 #define GROUP_SIZE_BNPR_SCAN_TEST_AGGRG 1024u
 
 #define NUM_ITEMS_BNPR_SCAN_TEST 1973581u
-
 
 #ifndef GPU_SHADER
 # define BNPR_SCAN_TEST_DATA_TYPE uint3
@@ -26,6 +36,7 @@
 # define BNPR_SEG_SCAN_TEST_STRUCT_TYPE SSBOData_SegScanTest
 # define BNPR_SEG_SCAN_TEST_STRUCT_TYPE_STR "SSBOData_SegScanTest"
 #endif
+/** \} */
 
 
 

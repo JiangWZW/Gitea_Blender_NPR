@@ -38,13 +38,13 @@ namespace blender::bnpr
   }
 
 
-  ObjectHandle& SyncModule::sync_object(Object* ob)
+  BnprDrawData& SyncModule::sync_object(Object* ob)
   {
     DrawEngineType* owner = (DrawEngineType*)&DRW_engine_viewport_bnpr_type;
     struct DrawData* dd = DRW_drawdata_ensure(
-      (ID*)ob, owner, sizeof(ObjectHandle), draw_data_init_cb, nullptr);
+      (ID*)ob, owner, sizeof(BnprDrawData), draw_data_init_cb, nullptr);
 
-    ObjectHandle &dd_bnpr = *reinterpret_cast<ObjectHandle*>(dd); // draw-engine specific draw data.
+    BnprDrawData &dd_bnpr = *reinterpret_cast<BnprDrawData*>(dd); // draw-engine specific draw data.
 
     if (dd_bnpr.object_key.ob == nullptr)
     {
@@ -56,7 +56,7 @@ namespace blender::bnpr
   }
 
   void SyncModule::sync_mesh(
-    Object* ob, ObjectHandle& ob_handle,
+    Object* ob, BnprDrawData& ob_draw_data,
     draw::ResourceHandle res_handle, const draw::ObjectRef& ob_ref
   )
   {
@@ -75,7 +75,7 @@ namespace blender::bnpr
     //  strokegen_passes.dispatch_extract_mesh_contour(ob);
     //  strokegen_passes.dispatch_XXX(...);
     //  ... ... ...
-    inst_.strokegen_passes.rebuild_pass_extract_mesh_geom(ob, geobatch);
+    inst_.strokegen_passes.rebuild_sub_pass_extract_mesh_geom(ob, geobatch);
 
 
 

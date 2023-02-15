@@ -80,8 +80,12 @@ namespace blender::bnpr
   void Instance::begin_sync(Manager& manager)
   {
     /* Init draw passes and manager related stuff. (Begin render graph) */
-    strokegen_buffers.sync();
-    strokegen_passes.sync();
+
+    /* First setup resources */
+    strokegen_buffers.on_begin_sync();
+
+    /* Then setup render passes */
+    strokegen_passes.on_begin_sync();
   }
 
   void Instance::end_sync(Manager&)
@@ -108,20 +112,20 @@ namespace blender::bnpr
     ObjectRef ob_ref = DRW_object_ref_get(ob);
     ResourceHandle res_handle = manager.resource_handle(ob_ref);
 
-    ObjectHandle &ob_handle = sync.sync_object(ob);
+    BnprDrawData &bnpr_draw_data = sync.sync_object(ob);
 
 
     if (object_is_visible) {
       switch (ob->type) {
       case OB_MESH:
-        sync.sync_mesh(ob, ob_handle, res_handle, ob_ref);
+        sync.sync_mesh(ob, bnpr_draw_data, res_handle, ob_ref);
         break;
       default:
         break;
       }
     }
 
-    ob_handle.reset_recalc_flag();
+    bnpr_draw_data.reset_recalc_flag();
   }
 
 
@@ -139,6 +143,8 @@ namespace blender::bnpr
   void Instance::draw_viewport(Manager& manager, View& view)
   {
     /* Submit passes here. (Execute render graph) */
+
+    /* GPU (Seg-)Scan Test */
     // manager.submit(strokegen_passes.get_compute_pass(StrokeGenPassModule::eType::SCAN_TEST), view);
     manager.submit(strokegen_passes.get_compute_pass(StrokeGenPassModule::eType::SEGSCAN_TEST), view);
 
@@ -162,6 +168,10 @@ namespace blender::bnpr
     }
     frame_counter = (frame_counter + 1) % 100000000;
 
+
+    /* Geometry Extraction for StrokeGen */
+    manager.submit(strokegen_passes.get_compute_pass(StrokeGenPassModule::eType::GEOM_EXTRACTION), view);
+    
   }
 
   /** \} */

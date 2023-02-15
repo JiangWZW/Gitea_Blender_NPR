@@ -12,7 +12,7 @@
 
 namespace blender::bnpr
 {
-  void GPUBufferPoolModule::sync()
+  void GPUBufferPoolModule::on_begin_sync()
   {
     UBO_BnprTreeScan& ubo_tree_scan = ubo_bnpr_tree_scan_infos_;
     {
@@ -29,8 +29,6 @@ namespace blender::bnpr
       ubo_tree_scan.dummy = 0u;
     }
     ubo_bnpr_tree_scan_infos_.push_update();
-
-
   }
 
   void GPUBufferPoolModule::sync_object(Object* ob)

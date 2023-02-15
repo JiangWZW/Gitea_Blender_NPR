@@ -128,7 +128,7 @@ namespace blender::bnpr
   /** \name Engine-Specific Draw-Data
    * \{ */
 
-  struct ObjectHandle : public DrawData
+  struct BnprDrawData : public DrawData
   {
     ObjectKey object_key;
 

@@ -78,7 +78,7 @@ ShaderModule::~ShaderModule()
  * \{ */
 
 const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_type)
-{
+{ // returns the name of ShaderCreateInfo
   switch (shader_type) {
     case DEPTH:
       return "basic_depth_mesh";
@@ -92,6 +92,10 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
       return "basic_depth_pointcloud_conservative";
     case COMPUTE_TEST:
       return "bnpr_strokegen_test_xxx";
+
+    case COMPUTE_GEOM_EXTRACT:
+      return "bnpr_geom_extract";
+    
     case SCAN_TEST_UPSWEEP:
       return "bnpr_scan_test_upsweep";
     case SCAN_TEST_AGGREGATE:

@@ -111,6 +111,24 @@ GPU_SHADER_CREATE_INFO(bnpr_segscan_test_inputs)
 
 
 /* -------------------------------------------------------------------- */
+/** \Geometry extraction from GPUBatch(es)
+ * \{ */
+GPU_SHADER_CREATE_INFO(bnpr_geom_extract)
+  .typedef_source("bnpr_shader_shared.hh")
+  .do_static_compilation(true)
+  .storage_buf(0, Qualifier::READ, "uint", "buf_ibo[]")
+  .storage_buf(1, Qualifier::READ, "vec3", "buf_vbo[]")
+  .storage_buf(2, Qualifier::READ_WRITE, "uint", "buf_strokegen_mesh_pool[]")
+  .push_constant(Type::BOOL, "pcs_ib_fmt_u16")
+  .push_constant(Type::UINT, "pcs_num_verts")
+  .push_constant(Type::UINT, "pcs_num_ib_offset")
+  .local_group_size(GROUP_SIZE_STROKEGEN_GEOM_EXTRACT) /* <== from "bnpr_defines.hh" */
+  .compute_source("bnpr_geom_extract_comp.glsl")
+;
+/** \} */
+
+
+/* -------------------------------------------------------------------- */
 /** \test shaders
  * \{ */
 GPU_SHADER_CREATE_INFO(bnpr_strokegen_test_xxx)

@@ -26,6 +26,9 @@ using namespace draw;
 #endif
 
 
+  /* ----------------------------------------------------- */
+  /** \name Noise Functions
+   * \{ */
   static inline uint wang_hash(uint seed)
   {
     seed = (seed ^ 61) ^ (seed >> 16);
@@ -35,8 +38,12 @@ using namespace draw;
     seed = seed ^ (seed >> 15);
     return seed;
   }
+  /** \} */
 
 
+  /* ----------------------------------------------------- */
+  /** \name Thread Group Counting
+   * \{ */
   static inline uint compute_num_threads(
     uint numWorkItems,
     uint numItemsPerThread = 1u, uint numThreadsPerItem = 1u
@@ -68,7 +75,13 @@ using namespace draw;
       return max(1u, ((numThreads + groupSize - 1) / groupSize));
 #endif
   }
+  /** \} */
 
+
+
+  /* ----------------------------------------------------- */
+  /** \name GPU Scan Testing
+   * \{ */  
   static inline uint tree_seg_scan_encode_upsweep_hfs(uint hf_partialSum, uint hf_orig)
   {
     return ((hf_orig << 1) | hf_partialSum);
@@ -111,8 +124,6 @@ using namespace draw;
   }
 
 
-
-
   struct UBData_TreeScan
   {
     uint num_scan_items;
@@ -131,7 +142,44 @@ using namespace draw;
 #endif
     uint hf;
   };
-  // BLI_STATIC_ASSERT_ALIGN(SSBOData_SegScanTest, 16)
+  BLI_STATIC_ASSERT_ALIGN(SSBOData_SegScanTest, 16)
+  /** \} */
+
+
+  
+  /* -------------------------------------------------------------------- */
+  /** \name Geometry Extraction from GPUBatch(es)
+   * \{ */
+  struct SSBOData_StrokeGenMeshPoolArgs
+  {
+    uint num_verts;
+    uint num_edges;
+    uint num_faces;
+    uint dummy;
+  };
+  BLI_STATIC_ASSERT_ALIGN(SSBOData_StrokeGenMeshPoolArgs, 16)
+
+  static inline uint get_prim_base_addr_ibo(bool is_ibo_fmt_u16, uint prim_id, uint num_verts_per_prim)
+  {
+    uint prim_vert_beg = prim_id * num_verts_per_prim;
+    return (is_ibo_fmt_u16 ? (prim_vert_beg / 2u) : (prim_vert_beg));
+  }
+
+  static inline uint get_vbo_addr(bool is_ibo_fmt_u16, uint ibo_data, uint prim_id, uint num_verts_per_prim)
+  {
+    uint prim_vert_beg = prim_id * num_verts_per_prim;
+    
+    uint ibo_data_16h = (ibo_data >> 16u);
+    uint ibo_data_16l = (ibo_data & 0xFFFFu);
+    return (is_ibo_fmt_u16
+              ? ( /* TODO: not sure about which 16 bits to use really */ 
+                ((prim_vert_beg & 1u) == 0u) ? ibo_data_16l : ibo_data_16h)
+              : ibo_data
+            );
+  }
+  /** } */
+
+
 
 
 
@@ -139,6 +187,10 @@ using namespace draw;
 
 // Template to set buffer size in compile time
 using SSBO_StrokeGenTest = draw::StorageArrayBuffer<uint, 4096 * 4, true>;
+
+using SSBO_StrokeGenMeshPool = draw::StorageArrayBuffer<uint, 2048 * 2048 * 4, true>;
+using SSBO_StrokeGenMeshPoolArgs = draw::StorageBuffer<SSBOData_StrokeGenMeshPoolArgs>;
+  
 using SSBO_BnprScanData = draw::StorageArrayBuffer<uint, 2048 * 2048 * 2, true>;
 using SSBO_BnprScanAggregates = draw::StorageArrayBuffer<uint, 512 * 16, true>;
 using UBO_BnprTreeScan = draw::UniformBuffer<UBData_TreeScan>;
