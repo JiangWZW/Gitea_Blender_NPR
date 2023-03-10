@@ -93,6 +93,7 @@
 #include "engines/external/external_engine.h"
 #include "engines/gpencil/gpencil_engine.h"
 #include "engines/image/image_engine.h"
+#include "engines/npr/npr_engine.h"
 #include "engines/overlay/overlay_engine.h"
 #include "engines/select/select_engine.h"
 #include "engines/workbench/workbench_engine.h"
@@ -2998,6 +2999,7 @@ void DRW_engines_register_experimental(void)
   if (U.experimental.enable_workbench_next) {
     RE_engines_register(&DRW_engine_viewport_workbench_next_type);
   }
+  RE_engines_register(&DRW_engine_viewport_npr_type);
 }
 
 void DRW_engines_register(void)

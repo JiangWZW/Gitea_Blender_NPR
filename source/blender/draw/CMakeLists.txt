@@ -191,6 +191,7 @@ set(SRC
   engines/gpencil/gpencil_shader_fx.c
   engines/select/select_draw_utils.c
   engines/select/select_engine.c
+  engines/npr/npr_engine.cc
   engines/overlay/overlay_antialiasing.cc
   engines/overlay/overlay_armature.cc
   engines/overlay/overlay_background.cc
@@ -310,6 +311,7 @@ set(SRC
   engines/workbench/workbench_shader_shared.h
   engines/select/select_engine.h
   engines/select/select_private.h
+  engines/npr/npr_engine.h
   engines/overlay/overlay_engine.h
   engines/overlay/overlay_private.hh
 )
@@ -529,6 +531,10 @@ set(GLSL_SRC
   engines/workbench/shaders/workbench_world_light_lib.glsl
 
   engines/workbench/workbench_shader_shared.h
+
+  engines/npr/shaders/npr_deferred_frag.glsl
+  engines/npr/shaders/npr_prepass_frag.glsl
+  engines/npr/shaders/npr_prepass_vert.glsl
 
   intern/shaders/common_aabb_lib.glsl
   intern/shaders/common_attribute_lib.glsl
