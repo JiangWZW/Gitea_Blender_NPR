@@ -35,10 +35,6 @@ set(INC
 
   # dna_type_offsets.h
   ${CMAKE_CURRENT_BINARY_DIR}/../makesdna/intern
-<<<<<<< .merge_file_jlZXvl
-=======
-  ${OPENSUBDIV_INCLUDE_DIRS}
->>>>>>> .merge_file_oeNtRG
 )
 
 set(SRC
@@ -155,17 +151,13 @@ set(SRC
   engines/eevee_next/eevee_renderbuffers.cc
   engines/eevee_next/eevee_sampling.cc
   engines/eevee_next/eevee_shader.cc
-<<<<<<< .merge_file_jlZXvl
   engines/eevee_next/eevee_shadow.cc
-=======
->>>>>>> .merge_file_oeNtRG
   engines/eevee_next/eevee_sync.cc
   engines/eevee_next/eevee_velocity.cc
   engines/eevee_next/eevee_view.cc
   engines/eevee_next/eevee_world.cc
   engines/workbench/workbench_data.c
   engines/workbench/workbench_effect_antialiasing.c
-<<<<<<< .merge_file_jlZXvl
   engines/workbench/workbench_effect_antialiasing.cc
   engines/workbench/workbench_effect_cavity.c
   engines/workbench/workbench_effect_cavity.cc
@@ -186,17 +178,6 @@ set(SRC
   engines/workbench/workbench_shadow.c
   engines/workbench/workbench_shadow.cc
   engines/workbench/workbench_state.cc
-=======
-  engines/workbench/workbench_effect_cavity.c
-  engines/workbench/workbench_effect_dof.c
-  engines/workbench/workbench_effect_outline.c
-  engines/workbench/workbench_engine.c
-  engines/workbench/workbench_materials.cc
-  engines/workbench/workbench_opaque.c
-  engines/workbench/workbench_render.c
-  engines/workbench/workbench_shader.cc
-  engines/workbench/workbench_shadow.c
->>>>>>> .merge_file_oeNtRG
   engines/workbench/workbench_transparent.c
   engines/workbench/workbench_volume.c
   engines/external/external_engine.c
@@ -210,10 +191,7 @@ set(SRC
   engines/gpencil/gpencil_shader_fx.c
   engines/select/select_draw_utils.c
   engines/select/select_engine.c
-<<<<<<< .merge_file_jlZXvl
   engines/npr/npr_engine.cc
-=======
->>>>>>> .merge_file_oeNtRG
   engines/overlay/overlay_antialiasing.cc
   engines/overlay/overlay_armature.cc
   engines/overlay/overlay_background.cc
@@ -242,7 +220,6 @@ set(SRC
   engines/overlay/overlay_viewer_attribute.cc
   engines/overlay/overlay_volume.cc
   engines/overlay/overlay_wireframe.cc
-<<<<<<< .merge_file_jlZXvl
 
   DRW_engine.h
   DRW_pbvh.hh
@@ -250,24 +227,6 @@ set(SRC
   intern/DRW_gpu_wrapper.hh
   intern/DRW_render.h
   intern/draw_attributes.hh
-=======
-  engines/bnpr/bnpr_engine.cc
-  engines/bnpr/bnpr_shader.cc
-  engines/bnpr/bnpr_instance.cc
-  engines/bnpr/bnpr_sync.cc
-  engines/bnpr/bnpr_strokegen_buffer_pool.cc
-  engines/bnpr/bnpr_strokegen_texture_pool.cc
-  engines/bnpr/bnpr_strokegen_pass.cc
-
-
-
-  DRW_engine.h
-  DRW_pbvh.h
-  DRW_select_buffer.h
-  intern/DRW_gpu_wrapper.hh
-  intern/DRW_render.h
-  intern/draw_attributes.h
->>>>>>> .merge_file_oeNtRG
   intern/draw_cache.h
   intern/draw_cache_extract.hh
   intern/draw_cache_impl.h
@@ -276,11 +235,7 @@ set(SRC
   intern/draw_command.hh
   intern/draw_common.h
   intern/draw_common_shader_shared.h
-<<<<<<< .merge_file_jlZXvl
   intern/draw_curves_private.hh
-=======
-  intern/draw_curves_private.h
->>>>>>> .merge_file_oeNtRG
   intern/draw_debug.h
   intern/draw_debug.hh
   intern/draw_hair_private.h
@@ -328,10 +283,7 @@ set(SRC
   engines/eevee_next/eevee_renderbuffers.hh
   engines/eevee_next/eevee_sampling.hh
   engines/eevee_next/eevee_shader.hh
-<<<<<<< .merge_file_jlZXvl
   engines/eevee_next/eevee_shadow.hh
-=======
->>>>>>> .merge_file_oeNtRG
   engines/eevee_next/eevee_sync.hh
   engines/eevee_next/eevee_velocity.hh
   engines/eevee_next/eevee_view.hh
@@ -351,7 +303,6 @@ set(SRC
   engines/image/image_space_node.hh
   engines/image/image_texture_info.hh
   engines/image/image_usage.hh
-<<<<<<< .merge_file_jlZXvl
   engines/workbench/workbench_defines.hh
   engines/workbench/workbench_engine.h
   engines/workbench/workbench_enums.hh
@@ -363,25 +314,6 @@ set(SRC
   engines/npr/npr_engine.h
   engines/overlay/overlay_engine.h
   engines/overlay/overlay_private.hh
-=======
-  engines/workbench/workbench_engine.h
-  engines/workbench/workbench_private.h
-  engines/workbench/workbench_shader_shared.h
-  engines/select/select_engine.h
-  engines/select/select_private.h
-  engines/overlay/overlay_engine.h
-  engines/overlay/overlay_private.hh
-  engines/bnpr/bnpr_engine.h
-  engines/bnpr/bnpr_shader.hh
-  engines/bnpr/bnpr_instance.hh
-  engines/bnpr/bnpr_sync_handles.hh
-  engines/bnpr/bnpr_sync.hh
-  engines/bnpr/bnpr_strokegen_buffer_pool.hh
-  engines/bnpr/bnpr_strokegen_texture_pool.hh
-  engines/bnpr/bnpr_strokegen_pass.hh
-  engines/bnpr/bnpr_strokegen_geom_extract.hh
-  engines/bnpr/bnpr_strokegen_geom_extract.cc
->>>>>>> .merge_file_oeNtRG
 )
 
 set(LIB
@@ -494,10 +426,7 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_camera_lib.glsl
   engines/eevee_next/shaders/eevee_colorspace_lib.glsl
   engines/eevee_next/shaders/eevee_cryptomatte_lib.glsl
-<<<<<<< .merge_file_jlZXvl
   engines/eevee_next/shaders/eevee_transparency_lib.glsl
-=======
->>>>>>> .merge_file_oeNtRG
   engines/eevee_next/shaders/eevee_depth_of_field_accumulator_lib.glsl
   engines/eevee_next/shaders/eevee_depth_of_field_bokeh_lut_comp.glsl
   engines/eevee_next/shaders/eevee_depth_of_field_downsample_comp.glsl
@@ -538,7 +467,6 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_motion_blur_lib.glsl
   engines/eevee_next/shaders/eevee_nodetree_lib.glsl
   engines/eevee_next/shaders/eevee_sampling_lib.glsl
-<<<<<<< .merge_file_jlZXvl
   engines/eevee_next/shaders/eevee_shadow_debug_frag.glsl
   engines/eevee_next/shaders/eevee_shadow_lib.glsl
   engines/eevee_next/shaders/eevee_shadow_clipmap_clear_comp.glsl
@@ -558,16 +486,11 @@ set(GLSL_SRC
   engines/eevee_next/shaders/eevee_shadow_tilemap_finalize_comp.glsl
   engines/eevee_next/shaders/eevee_shadow_tilemap_init_comp.glsl
   engines/eevee_next/shaders/eevee_shadow_tilemap_lib.glsl
-=======
->>>>>>> .merge_file_oeNtRG
   engines/eevee_next/shaders/eevee_surf_deferred_frag.glsl
   engines/eevee_next/shaders/eevee_surf_depth_frag.glsl
   engines/eevee_next/shaders/eevee_surf_forward_frag.glsl
   engines/eevee_next/shaders/eevee_surf_lib.glsl
-<<<<<<< .merge_file_jlZXvl
   engines/eevee_next/shaders/eevee_surf_shadow_frag.glsl
-=======
->>>>>>> .merge_file_oeNtRG
   engines/eevee_next/shaders/eevee_surf_world_frag.glsl
   engines/eevee_next/shaders/eevee_velocity_lib.glsl
 
@@ -577,10 +500,7 @@ set(GLSL_SRC
   engines/workbench/shaders/workbench_cavity_lib.glsl
   engines/workbench/shaders/workbench_common_lib.glsl
   engines/workbench/shaders/workbench_composite_frag.glsl
-<<<<<<< .merge_file_jlZXvl
   engines/workbench/shaders/workbench_next_composite_frag.glsl
-=======
->>>>>>> .merge_file_oeNtRG
   engines/workbench/shaders/workbench_curvature_lib.glsl
   engines/workbench/shaders/workbench_effect_cavity_frag.glsl
   engines/workbench/shaders/workbench_effect_dof_frag.glsl
@@ -592,10 +512,7 @@ set(GLSL_SRC
   engines/workbench/shaders/workbench_matcap_lib.glsl
   engines/workbench/shaders/workbench_material_lib.glsl
   engines/workbench/shaders/workbench_merge_infront_frag.glsl
-<<<<<<< .merge_file_jlZXvl
   engines/workbench/shaders/workbench_next_merge_depth_frag.glsl
-=======
->>>>>>> .merge_file_oeNtRG
   engines/workbench/shaders/workbench_prepass_frag.glsl
   engines/workbench/shaders/workbench_prepass_hair_vert.glsl
   engines/workbench/shaders/workbench_prepass_pointcloud_vert.glsl
@@ -605,10 +522,7 @@ set(GLSL_SRC
   engines/workbench/shaders/workbench_shadow_debug_frag.glsl
   engines/workbench/shaders/workbench_shadow_geom.glsl
   engines/workbench/shaders/workbench_shadow_vert.glsl
-<<<<<<< .merge_file_jlZXvl
   engines/workbench/shaders/workbench_shadow_visibility_comp.glsl
-=======
->>>>>>> .merge_file_oeNtRG
   engines/workbench/shaders/workbench_shadow_vert_no_geom.glsl
   engines/workbench/shaders/workbench_transparent_accum_frag.glsl
   engines/workbench/shaders/workbench_transparent_resolve_frag.glsl
@@ -618,13 +532,10 @@ set(GLSL_SRC
 
   engines/workbench/workbench_shader_shared.h
 
-<<<<<<< .merge_file_jlZXvl
   engines/npr/shaders/npr_deferred_frag.glsl
   engines/npr/shaders/npr_prepass_frag.glsl
   engines/npr/shaders/npr_prepass_vert.glsl
 
-=======
->>>>>>> .merge_file_oeNtRG
   intern/shaders/common_aabb_lib.glsl
   intern/shaders/common_attribute_lib.glsl
   intern/shaders/common_colormanagement_lib.glsl
@@ -664,10 +575,7 @@ set(GLSL_SRC
   intern/shaders/draw_debug_print_display_frag.glsl
   intern/shaders/draw_debug_print_display_vert.glsl
   intern/shaders/draw_resource_finalize_comp.glsl
-<<<<<<< .merge_file_jlZXvl
   intern/shaders/draw_view_finalize_comp.glsl
-=======
->>>>>>> .merge_file_oeNtRG
   intern/shaders/draw_visibility_comp.glsl
 
   intern/draw_command_shared.hh
@@ -737,10 +645,7 @@ set(GLSL_SRC
   engines/overlay/shaders/overlay_edit_mesh_analysis_frag.glsl
   engines/overlay/shaders/overlay_edit_mesh_analysis_vert.glsl
   engines/overlay/shaders/overlay_edit_mesh_common_lib.glsl
-<<<<<<< .merge_file_jlZXvl
   engines/overlay/shaders/overlay_edit_mesh_depth_vert.glsl
-=======
->>>>>>> .merge_file_oeNtRG
   engines/overlay/shaders/overlay_edit_mesh_frag.glsl
   engines/overlay/shaders/overlay_edit_mesh_geom.glsl
   engines/overlay/shaders/overlay_edit_mesh_normal_vert.glsl
@@ -805,10 +710,7 @@ set(GLSL_SRC
   engines/overlay/shaders/overlay_point_varying_color_frag.glsl
   engines/overlay/shaders/overlay_point_varying_color_varying_outline_aa_frag.glsl
   engines/overlay/shaders/overlay_pointcloud_only_vert.glsl
-<<<<<<< .merge_file_jlZXvl
   engines/overlay/shaders/overlay_sculpt_curves_cage_vert.glsl
-=======
->>>>>>> .merge_file_oeNtRG
   engines/overlay/shaders/overlay_sculpt_curves_selection_frag.glsl
   engines/overlay/shaders/overlay_sculpt_curves_selection_vert.glsl
   engines/overlay/shaders/overlay_sculpt_mask_frag.glsl
@@ -832,26 +734,10 @@ set(GLSL_SRC
   engines/image/shaders/image_engine_color_vert.glsl
   engines/image/shaders/image_engine_depth_frag.glsl
   engines/image/shaders/image_engine_depth_vert.glsl
-<<<<<<< .merge_file_jlZXvl
 )
 
 set(GLSL_C)
 
-=======
-
-  engines/bnpr/shaders/bnpr_hlsl_support_lib.glsl
-  engines/bnpr/shaders/bnpr_scan_no_subgroup_lib.glsl
-  engines/bnpr/shaders/bnpr_scan_no_subgroup_codegen_lib.glsl
-  engines/bnpr/shaders/bnpr_strokegen_test_comp.glsl
-  engines/bnpr/shaders/bnpr_scan_test_comp.glsl
-  engines/bnpr/shaders/bnpr_geom_extract_comp.glsl
-
-  engines/bnpr/bnpr_defines.hh
-  engines/bnpr/bnpr_shader_shared.hh
-)
-
-set(GLSL_C)
->>>>>>> .merge_file_oeNtRG
 foreach(GLSL_FILE ${GLSL_SRC})
   data_to_c_simple(${GLSL_FILE} GLSL_C)
 endforeach()
@@ -863,10 +749,7 @@ list(APPEND LIB
 )
 
 set(GLSL_SOURCE_CONTENT "")
-<<<<<<< .merge_file_jlZXvl
 
-=======
->>>>>>> .merge_file_oeNtRG
 foreach(GLSL_FILE ${GLSL_SRC})
   get_filename_component(GLSL_FILE_NAME ${GLSL_FILE} NAME)
   string(REPLACE "." "_" GLSL_FILE_NAME_UNDERSCORES ${GLSL_FILE_NAME})
@@ -890,15 +773,12 @@ if(WITH_DRAW_DEBUG)
   add_definitions(-DWITH_DRAW_DEBUG)
 endif()
 
-<<<<<<< .merge_file_jlZXvl
 if(WITH_OPENSUBDIV)
   list(APPEND INC_SYS
     ${OPENSUBDIV_INCLUDE_DIRS}
   )
 endif()
 
-=======
->>>>>>> .merge_file_oeNtRG
 if(WITH_MOD_FLUID)
   list(APPEND INC
     ../../../intern/mantaflow/extern
@@ -922,19 +802,13 @@ endif()
 
 if(WITH_TBB)
   add_definitions(-DWITH_TBB)
-<<<<<<< .merge_file_jlZXvl
 
-=======
->>>>>>> .merge_file_oeNtRG
   if(WIN32)
     # TBB includes Windows.h which will define min/max macros
     # that will collide with the stl versions.
     add_definitions(-DNOMINMAX)
   endif()
-<<<<<<< .merge_file_jlZXvl
 
-=======
->>>>>>> .merge_file_oeNtRG
   list(APPEND INC_SYS
     ${TBB_INCLUDE_DIRS}
   )
@@ -954,11 +828,7 @@ if(WITH_GTESTS)
     set(TEST_SRC
       tests/draw_pass_test.cc
       tests/draw_testing.cc
-<<<<<<< .merge_file_jlZXvl
       tests/eevee_test.cc
-=======
-      tests/shaders_test.cc
->>>>>>> .merge_file_oeNtRG
 
       tests/draw_testing.hh
     )
